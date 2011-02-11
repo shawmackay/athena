@@ -60,10 +60,10 @@ public class DefaultJolt_Dialect implements Dialect {
      *@since
      */
     public Object getCallOutput() {
-        Enumeration enum = joltDefinition.getParams();
+        Enumeration paramenum = joltDefinition.getParams();
         int i = 0;
-        while (enum.hasMoreElements()) {
-            JoltParam jParam = (JoltParam) enum.nextElement();
+        while (paramenum.hasMoreElements()) {
+            JoltParam jParam = (JoltParam) paramenum.nextElement();
             String pName = jParam.getName();
             header.put(pName, new Integer(i++));
             switch (jParam.getType()) {
@@ -127,9 +127,9 @@ public class DefaultJolt_Dialect implements Dialect {
      *@since
      */
     public void processInput() {
-        Enumeration enum = joltDefinition.getParams();
-        while (enum.hasMoreElements()) {
-            JoltParam jParam = (JoltParam) enum.nextElement();
+        Enumeration paramenum = joltDefinition.getParams();
+        while (paramenum.hasMoreElements()) {
+            JoltParam jParam = (JoltParam) paramenum.nextElement();
             String pName = jParam.getName();
             switch (jParam.getType()) {
                 case SBuffer.SSTRING:
