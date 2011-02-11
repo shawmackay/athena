@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE jolttransforms >
+
+<jolttransforms>
+    <transform name="TESTP12">
+        <input>input.xsl</input>
+        <output>transform.xsl</output>
+    </transform>
+
+    <transform name="INSERTX">
+        <input>insertx.xsl</input>
+        <output></output>
+    </transform>
+
+    <transform name="JEXD">
+        <input>jexd.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="JCAD">
+        <input>jcad.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="JATM">
+        <input>jatm.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="JDCR">
+        <input>jdcr.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="JNTU">
+        <input>jntu.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="JPSC">
+        <input>jpsc.xsl</input>
+        <output>errorreturn.xsl</output>
+    </transform>
+
+    <transform name="PROJECT">
+        <input>project.xsl</input>
+        <output>project.xsl</output>
+    </transform>
+    <transform name="TOUPPER">
+        <input>toupper.xsl</input>
+        <output>toupper.xsl</output>
+    </transform>
+
+</jolttransforms>

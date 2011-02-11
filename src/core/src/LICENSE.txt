@@ -1,0 +1,3 @@
+Athena is distributed under the Sun Community Source License (SCSL).
+This software is distributed without warranty either direct or through
+implication of usage.

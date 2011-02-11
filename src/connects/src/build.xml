@@ -1,0 +1,226 @@
+<project name="athenaconnect" default="instruct" basedir="..">
+	<!-- set global properties for this build -->
+
+
+
+	<target name="init">
+		
+		
+		<property name="src" value="src" />
+		<property name="build" value="./build" />
+		<property name="dist" value="./dist/${ant.project.name}" />
+		<property name="javalib" value="c:\java\libs" />
+		<property name="jinilib" value="d:\development\jini2_1\lib" />
+		<property name="oraclelibs" value="c:\java\libs" />
+		<property name="bdbjelibs" value="d:\development\je-3.2.44\lib" />
+		<property name="ctglibs" value="${javalib}" />
+		<property name="joltlibs" value="${javalib}" />
+<!--		<property name="jaxbloc" value="/usr/local/java/jwsdp-1.3" />-->
+		<property name="athenaloc" value="..\core\dist\athena\lib" />
+
+		<property name="jdk14compiler" value="c:\java\j2sdk1.4.2_06"/>
+		
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+
+		<path id="oracle.class.path">
+			<fileset dir="${oraclelibs}">
+				<include name="classes12.zip" />
+			</fileset>
+		</path>
+		<path id="ctg.class.path">
+			<fileset dir="${ctglibs}">
+				<include name="ctgserver.jar" />
+				<include name="ctgclient.jar" />
+			</fileset>
+		</path>
+		<path id="bdb.class.path">
+			<fileset dir="${bdbjelibs}">
+				<include name="je-3.2.44.jar" />
+			</fileset>
+		</path>
+		<path id="jolt.class.path">
+			<fileset dir="${joltlibs}">
+				<include name="jolt.jar" />
+			</fileset>
+		</path>
+		<path id="all.class.path">
+			<fileset dir="${jinilib}">
+				<include name="jini*.jar" />
+				<include name="sun-util.jar" />
+				<include name="jsk-platform.jar" />
+			</fileset>
+			<fileset dir="${athenaloc}">
+				<include name="athena*.jar" />
+				
+			</fileset>
+			<!--<fileset dir="${java.home}/../lib" includes="tools.jar" />-->
+			<!-- Include specific project directories -->
+			<!--
+				<pathelement location="${athenaloc}" />
+			<pathelement location="${thor_loc}" />
+
+			<pathelement location="../utilities20/bin" />
+			<fileset dir="${javalib}">
+				<include name="uiapi100.jar" />
+				<include name="junit.jar" />
+				<include name="eros-itf.jar" />
+				<include name="jython.jar" /> 
+				<include name="ctgserver.jar" />
+				<include name="jolt.jar" />
+				<include name="classes12.zip" />
+			</fileset>-->
+			<pathelement location="${classes}" />
+		</path>
+
+
+	</target>
+	
+	
+	<target name="bdb" depends="init" description="Builds the Berkeley DB JE connect">
+		<echo message="Building Athena connect for Berekeley DB JE" />
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4"  includes="org/jini/projects/athena/connects/bdb/**/*.java">
+			<classpath refid="bdb.class.path" />
+			<classpath refid="all.class.path" />
+		</javac>
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/bin" />
+		<jar jarfile="${dist}/lib/athena_bdb.jar">
+			<fileset dir="${build}">
+				<include name="org/jini/projects/athena/connects/bdb/**/*.class" />
+				
+			</fileset>
+		</jar>
+		<echo>Please copy ${dist}/lib/athena_bdb.jar to your athena lib directory</echo>
+		<pathconvert targetos="unix" refid="bdb.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_bdb.sh to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_oracle.sh">
+			export DRIVERLIBS=${scriptclasspath}:lib/athena_bdb.jar
+			bin/runathena.sh $1
+		</echo>
+		<pathconvert targetos="windows" refid="oracle.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_oracle.bat to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_oracle.bat">
+			set DRIVERLIBS=${scriptclasspath};lib\athena_oracle.jar
+			bin\runathena.bat %1
+		</echo>
+		
+	</target>
+	
+
+	<target name="oracle" depends="init" description="Builds the oracle connect">
+		<echo message="Building Athena connect for Oracle" />
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4" fork="yes" executable="${jdk14compiler}\bin\javac" includes="org/jini/projects/athena/connects/oracle/**/*.java,org/jini/projects/athena/connects/sql/**/*.java">
+			<classpath refid="oracle.class.path" />
+			<classpath refid="all.class.path" />
+		</javac>
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/bin" />
+		<jar jarfile="${dist}/lib/athena_oracle.jar">
+			<fileset dir="${build}">
+				<include name="org/jini/projects/athena/connects/oracle/**/*.class" />
+				<include name="org/jini/projects/athena/connects/sql/**/*.class" />
+			</fileset>
+		</jar>
+		<echo>Please copy ${dist}/lib/athena_oracle.jar to your athena lib directory</echo>
+		<pathconvert targetos="unix" refid="oracle.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_oracle.sh to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_oracle.sh">
+export DRIVERLIBS=${scriptclasspath}:lib/athena_oracle.jar
+bin/runathena.sh $1
+		</echo>
+		<pathconvert targetos="windows" refid="oracle.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_oracle.bat to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_oracle.bat">
+set DRIVERLIBS=${scriptclasspath};lib\athena_oracle.jar
+bin\runathena.bat %1
+		</echo>
+
+	</target>
+	<target name="instruct">
+		<echo>
+			Please choose one of the target options and re-run ant. E.g ant oracle
+		</echo>
+	</target>
+	
+	
+	
+	<target name="ctg" depends="init" description="Builds the connect for CICS Transaction Gateway">
+		<echo message="Building Athena connect for CICS Transaction Gateway" />
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4" fork="true" executable="c:\j2sdk1.4.2_05\bin\javac" includes="org/jini/projects/athena/connects/ctg/**/*.java">
+			<classpath refid="ctg.class.path" />
+			<classpath refid="all.class.path" />
+		</javac>
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/bin" />
+		<jar jarfile="${dist}/lib/athena_ctg.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/connects/ctg/**/*.class" />
+		</jar>
+		<echo>Please copy ${dist}/lib/athena_ctg.jar to your athena lib directory</echo>
+		<pathconvert targetos="unix" refid="ctg.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_ctg.sh to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_ctg.sh">
+export DRIVERLIBS=${scriptclasspath}:lib/athena_ctg.jar
+bin/runathena.sh $1
+		</echo>
+		<pathconvert targetos="windows" refid="ctg.class.path" property="scriptclasspath" />
+		<echo>Please copy ${dist}/bin/runathena_ctg.bat to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_ctg.bat">
+set DRIVERLIBS=${scriptclasspath};lib\athena_ctg.jar
+bin\runathena.bat %1
+		</echo>		
+	</target>
+
+	
+	<target name="sql" depends="init" description="Builds the connect for Standard JDBC">
+		<echo message="Building Athena connect for Standard JDBC" />
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4" fork="yes" executable="${jdk14compiler}\bin\javac" includes="org/jini/projects/athena/connects/sql/**/*.java">
+			<classpath refid="all.class.path" />
+		</javac>
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/bin" />
+		<jar jarfile="${dist}/lib/athena_jdbc.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/connects/sql/**/*.class" />
+		</jar>
+		<echo>Please copy ${dist}/lib/athena_jdbc.jar to your athena lib directory</echo>
+		<echo>Please copy ${dist}/bin/runathena_jdbc.sh to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_jdbc.sh">
+echo ADD your jdbc drivers to DRIVERLIBS and remove this message			
+export DRIVERLIBS=lib/athena_jdbc.jar
+bin/runathena.sh $1
+		</echo>
+		<echo>Please copy ${dist}/bin/runathena_jdbc.bat to your athena bin directory</echo>
+		<echo file="${dist}/bin/runathena_jdbc.bat">
+echo ADD your jdbc drivers to DRIVERLIBS and remove this message
+set DRIVERLIBS=lib\athena_jdbc.jar
+bin\runathena.bat %1
+		</echo>		
+	</target>
+		
+	
+	
+	<target name="jolt" depends="init" description="Builds the connect for BEA Jolt">
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4" fork="yes" executable="c:\j2sdk1.4.2_05\bin\javac" includes="org/jini/projects/athena/connects/jolt/**/*.java">
+			<classpath refid="jolt.class.path" />
+			<classpath refid="all.class.path" />
+		</javac>
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<jar jarfile="${dist}/lib/athena_jolt.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/connects/jolt/**/*.class" />
+		</jar>
+	</target>
+	
+	
+
+	<target name="clean">
+		<delete dir="${dist}" />
+		<delete dir="${build}" />
+	</target>
+</project>

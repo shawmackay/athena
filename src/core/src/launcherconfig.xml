@@ -1,0 +1,21 @@
+<launcherconfig>
+	<general>
+		<appname>Athena</appname>
+		<licenseFile>license.txt</licenseFile>
+		<readmeFile>readme.txt</readmeFile>
+		<directoryName>Athena</directoryName>
+		<prerequisites>prerequisites.html</prerequisites>
+		<image>/instlib/logo</image>
+		<policy default="config/policy.all"/>
+		<config default="config/sample.config"/>
+		<codebase value="lib/athena-dl.jar"/>
+		
+		<script-var name="FileLogLevel" comment="Level of logging to be directed files" default="FINER"/>
+		<script-var name="thorBranch" comment="Branch where configuration settings are held" default="Properties/Athena/sample"/>
+		<script-var name="thorName" comment="Name of thor instance where configuration branch is stored" default="master"/>				
+		<script-var name="athenaName" comment="Name to use for Athena" default="Athena"/>
+		<script-var name="ConsoleLogLevel" comment="Level of logging to be directed to Console" default="INFO"/>		
+		<script-var name="GROUP" comment="Name of Jini Group to use in default config" default="public"/>
+		<ctd-import template="config/athena.ctd"/>
+	</general>
+</launcherconfig>

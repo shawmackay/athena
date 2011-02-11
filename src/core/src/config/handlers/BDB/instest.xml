@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 2 September 2007, 23:37 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>athenatest</name>
+    <context key="SYS1">
+    <params>
+	    
+    </params>
+    <command type="passthrough" optype="write"/>
+    </context>
+</chi>

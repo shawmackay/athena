@@ -1,0 +1,13 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.projects.jini.org">
+	<command callname="athenatest">
+		<param name="key" value="Hey"/>
+		<param name="data" value="you"/>
+	</command>
+	<command callname="readtest">
+		<param name="key" value="Hey"/>
+		<param name="description" value="Generic Widget"/>
+		
+	</command>
+	
+</harness:commands>

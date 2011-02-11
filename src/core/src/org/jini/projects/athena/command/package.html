@@ -1,0 +1,19 @@
+<HTML>
+  <HEAD>
+    <TITLE>MyInfo</TITLE>
+  </HEAD>
+  <BODY>
+  Represents the main package for <code>Command</code> and <code>Handler</code> Objects.
+  This package and it's sub packages provide classes which manipulate the invocation which is executed against the host, and also classes which represent the instruction from the client.
+  <br>In all cases the </code>Command</code> represents the name and arguments that a client wishes to invoke on Athena,
+    and that Athena will want to invoke at the host. The <code>Call</code> represents the actual execution against a host. A Command and a Call are not directly linked, because Commands may
+    be handled adequately by a <code>Handler</code> or perhaps used 'nearer' the host in a <code>Dialect</code><br><br>
+
+    Calls are used where the basic semantics of the host invocation cannot be handled by standard Java classes. For instance in SQL, SQL can normally be run using Strings, therefore the <code>SystemConnection</code> classes
+can passthrough the String directly to the host classes i.e. the JDBC driver for handling. However with many datasources, passthrough is not available, therefore SysytemConnections, will generally instantiate a Call class, usually with the command
+    as a parameter in the constructor, and call it's execute method which returns the return data from the host.<br><br>
+
+    Handlers are run at the inset of an execution from a client i.e. executeQuery() or executeUpdate(). Handlers provide a form of validation on Commands, and inform the runtime of what should happen next in order to satisfy the request.<BR>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,274 @@
+<html>
+<head>
+	<title>Getting Started with Athena - HSQLDB</title>
+</head>
+<body>
+<h1>Tutorials</h1>
+<h2>Using Athena with an embedded hsqldb database</h2>
+<p><i>You can download the Athena config files and a sample database, for this tutorial from <a href="http://athena.jini.org/files/documents/439/331/athena_hsql_tutorial.zip">here</a></i></p><p>
+As a fairly immediate example of getting Athena up and running, I'll go through the steps of using a HSQLDB database embedded within Athena.<br/>
+Follow the steps for installing Athena, and when the post-install configuration screen is started, click the link for HSQLDB, this will install, and unpack the HSQLDB distribution 
+and add it to your athena startup scripts.</p>
+
+<h2>Configuration is everything</h2>
+Configuration in Athena is split in two. The first configuration that Athena needs is what we call the service configuration, the second is the datasource configuration.<br/>
+<h3>The Service configuration</h3>
+<p>Athena's service configuration is stored in a jini configuration file, there is also another configuartion file stored in <b><b>&lt;</b>athena-root>/config/exportmgr.config</b> - this file how Athena exports the various Remote proxies it creates.
+The service configuration file is specified on the command line as the first parameter to <i>org.jini.projects.athena.ServiceApplication</i>. If you have just installed the basic and configured Athena for
+the first time, or have not edited the files created by the installer, this file will be <b><b>&lt;</b>athena-root>/config/athena.config</b>. the <i>runathena</i> script file will basically point ServiceApplication
+at that particular configuration file.</p>
+<p>
+The service configuration requires the following items to be set.
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+org.jini.projects.athena {
+	athenaName="<b>&lt;</b>name of your instance>";
+	groups=new String[]{<b>&lt;</b>comma seperated list of groups>};
+	ui="<b>&lt;</b>One of clean, light or none>";
+	fileLogLevel="<b>&lt;</b>Logging Level for files>";
+	consoleLogLevel="<b>&lt;</b>Logging Level for the console window>";
+	policy="<b>&lt;</b>Location of security policy file>";
+	codebase="<b>&lt;</b>URL codebase for downloaded classes>";
+	thorName="<b>&lt;</b>Name of the thor instance holding datasource properties>";
+	thorBranch="<b>&lt;</b>Branch holding datasource properties";	
+}
+</pre>
+</font>
+</td>
+</tr>
+</table>
+</center>
+For instance our sample configuration file might look like this
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+org.jini.projects.athena {
+	athenaName="HSQLDB";
+	groups=new String[]{"development"};
+	ui="clean";
+	fileLogLevel="FINER";
+	consoleLogLevel="INFO";
+	policy="config/policy.all";
+	codebase="http://www.myserver.com/thor-dl.jar";
+	thorName="main";
+	thorBranch="general/applications/Athena/hsqldb";	
+}
+</pre>
+</font>
+</td>
+</tr>
+</table>
+</center>
+You can edit the configuration through the lamplighter configuration screens.<br/> 
+<br/>
+<p>
+Once you have edited your configuration, you can move on to the next part; the datasource configuration</p>
+<p>
+The core athena configuration concerning how Athena will interact with the datasource is held within <a href="thor.jini.org">Thor</a>.
+There are a couple of reasons for this; if you run multiple instances of Athena, you can hold the main configuration centrally, also some changes to the
+configuration held in Thor, can be applied automatically in Athena without restarting it.</p>
+<p>
+There are a number of items that need to be stored in Thor, and these will vary from datasource to datasource, but for JDBC datasources, the
+items required are the same.
+
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+<b>&lt;</b><font color="blue">root</font><b>&gt;</b> 
+ 
+      <b>&lt;</b><font color="blue">props</font> <font color="green">name</font>=&quot;hsqldb&quot;<b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.service.name&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>
+                <font color="black" size=+1><b>HSQLDB</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connect.username&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>
+                <font color="black" size=+1><b>athena</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connect.type&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>
+                <font color="black" size=+1><b>SQL</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connection.class&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>org.jini.projects.athena.connects.SQLConnection</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connect.password&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>
+                <font color="black" size=+1><b>athena</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.service.numconnect&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>4</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connect.url&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>jdbc:hsqldb:file:db/athenadb</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.ui.clean&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>true</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connect.driver&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>org.hsqldb.jdbcDriver</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.connection.adhoctimeout&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>50000</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.service.groups&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>development</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+        <b>&lt;</b><font color="blue">item</font> <font color="green">name</font>=&quot;org.jini.projects.athena.shutdownClass&quot; <font color="green">type</font>=&quot;java.lang.String&quot;<b>&gt;</b>;
+                <font color="black" size=+1><b>org.jini.projects.athena.connects.sql.shutdown.HSQLShutdown</b></font>
+        <b>&lt;</b><font color="blue">/item</font><b>&gt;</b>
+      <b>&lt;</b><font color="blue">/props</font><b>&gt;</b>
+<b>&lt;</b><font color="blue">/root</font><b>&gt;</b>
+</pre>
+
+
+</font></td></tr></table></center> 
+<p>Once you've set up your properties, you need to add them into Thor</p>
+You can use Thor's loader utility to load the data into an existing branch using the following command at a shell
+<pre>
+java -classpath <b>[thor_home]</b>/lib/thor.jar org.jini.projects.thor.client.ThorLoader <b>[group name] [thor name] [parent branch] [xml file]</b>
+</pre>
+i.e. <pre>
+<i> java -classpath /usr/local/java/thor/lib/thor.jar org.jini.projects.thor.client.ThorLoader development thor general/applications/Athena hsql_thor.xml</i>
+</pre>
+<p>Of particular note is the <b>org.jini.projects.athena.connect.url</b> property - in this example we use an embedded database; this is because we can get Athena running with an embedded
+version of HSQL more easily than with other client-server databases, such as Oracle or MSSQL, because the preparation is far less with an embedded database. A note of <i>caution</i> however;
+with an embedded database, the Athena process, and any sub-processes, is/are doing all the work for Athena and a RDBMS, so take this into account with any performance/load tests.  
+<br/>From now on I'll assume we store the database in <b>&lt;athenaroot>/db</b> and we'll call it <b><i>athena</i></b></p>
+<h2>Getting the HSQL distribution</h2>
+There are two ways of getting hold of the HSQLDB distribution:
+<ol>
+	<li>Using a web browser</li>
+	<li>Using the lamplighter configuration tool</li>
+</ol>
+
+<h3>Using a web browser</h3>
+<p>Point your browser at the <a href="http://hsqldb.sourceforge.net">HSQLDB homepage</a>, and follow the instructions for downloading. You can then edit the <i>runathena.*</i> files in <b>&lt;athenaroot></b> and add the <b>&lt;hsqldb install dir></b>/lib/hsqldb.jar to the classpath</p>
+ <br/>
+ <h3>Using the lamplighter configuration tool</h3>
+ <p>If you install Athena using the LampLighter installer (which you will have done, if installing anything after Athena 1.0 beta 1), the installer installs, in addition to the normal runathena scripts, a file called
+<i>run_post_install</i> and <i>run_configuration</i>. The first file (run_post_install) starts the post install configuration screen that you will have seen, after the initial Athena install was completed.<br/>
+In the prerequisites tab, you will have the option of installing the HSQLDB software. Clicking the link will bring up the download window, click 'Go', and the hsqldb software will be downloaded, then
+when the file is downloaded, choose an install location and the hsqldb distribution will be automatically installed, and the requisite libraries added to Athena's classpath</p>
+<i>Incidentally, run_configuration, allows you to edit any of your Jini configuration files.</i>
+<h3>Creating the initial database structure</h3>
+Using the DatabaseManager tool supplied with HSQLDB, we'll create the database.<br/>
+Load the Database Manager using (run this from the directory you installed Athena to)</br>
+
+<pre>java -cp [hsqldb_root]/lib/hsqldb.jar org.hsqldb.util.DatabaseManager</pre>
+
+Make sure you start your connection similar to the one shown below.<br/>
+<center>
+<a href="images/athena_hsql_settings.png" target="_blank" border="0"><img src="images/athena_hsql_settings.png"/></a><br/>
+<font size=-1>Fig1: HSQLDB DatabaseManager Settings</font>
+</center>
+<h3>Adding a new user, and sample tables</h3>
+<ol>
+<li>First of all we'll add our 'athena' user. Paste the following into the text box at the top of the Database Manager window 
+<pre>
+create user athena password "athena" admin
+</pre>
+And click on 'Execute'
+</li>
+<li>Now we create our Sample table:
+<pre>
+ CREATE TABLE ATHENATEST(CODE VARCHAR(6),DESCRIPTION VARCHAR(50),QUANTITY INTEGER)
+ </pre>
+ </li>
+ <li>Insert a test row:
+ <pre>
+INSERT INTO ATHENATEST VALUES('ABCDE','Generic Widget',1)
+</pre>
+</li>
+</ol>
+
+Now we're ready to start Athena and test the conectivity.
+
+<h2>Starting Athena and testing the database</h2>
+<p>Starting Athena is a fairly simple affair, with HSQLDB, but we'll just check a few things first</p>
+
+<ul>
+<li>Ensure that <b>hsqldb.jar</b> is on the path in the <i>runathena</i> script.</li>
+<li>Ensure that you have created your database at <i>&lt;athenaroot>/db</i> (will (at least) contain the files <b>athena.properties</b> and <b>athena.script</b>)</li>
+<li>Your Thor properties point to <b>db/athena</b> (<i>jdbc url</i>) and your username and password are both set to <b>'athena'</b>.
+<li>Your configuration file points to your Thor instance and the branch that the properties are stored at</li>
+</ul>
+<p>Once these are checked, you are ready to test</p>
+<p>In a shell window, enusre that youre current directory is &lt;athenaroot> and type the following:<p>
+Unix
+<pre>
+	runathena.sh &lt;configuration filename>
+</pre>
+Win32
+<pre>
+	runathena &lt;configuration filename>
+</pre>
+
+
+You should see output similar to the following:
+<center>
+<table width=60% bgcolor="black" cellpadding="6">
+<tr><td>
+<font color="white">
+<pre>
+Creating Manager: default
+INFO    [28/09/04 15:32:56] (DefaultExporterManager) Defining Service export rule  for ExporterManager default
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Building referential Exporter
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Defining Connection export rule  for ExporterManager default
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Building referential Exporter
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Defining Participants export rule  for ExporterManager default
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Defining ResultSet export rule  for ExporterManager default
+INFO    [28/09/04 15:32:57] (DefaultExporterManager) Defining ThorListener export rule  for ExporterManager default
+Initialising SystemManager
+INFO    [28/09/04 15:33:00] (SystemManager) Initialised SystemManager
+INFO    [28/09/04 15:33:00] (ServiceApplication) Initiliasing Object Pools
+Creating default pool.......
+INFO    [28/09/04 15:33:01] (ServiceApplication) Initialising System Caches
+INFO    [28/09/04 15:33:01] (ServiceApplication) Initialising Engines
+INFO    [28/09/04 15:33:01] (DialectEngine) No Input transforms for HSQLDB
+INFO    [28/09/04 15:33:01] (DialectEngine) No Output transforms for HSQLDB
+INFO    [28/09/04 15:33:02] (JoinManagement) Registered with: jini://one.server.com/{419b4055-cd81-4372-aec8-cb83ba19d9db}
+INFO    [28/09/04 15:33:02] (JoinManagement) Logging in to Thor
+INFO    [28/09/04 15:33:02] (JoinManagement) Looking at Properties/Athena/HSQLDB
+INFO    [28/09/04 15:33:02] (JoinManagement) Registered with: jini://two.server.com:4169/{61de5463-8a85-4613-9287-8c7d1f6bfeff}
+INFO    [28/09/04 15:33:02] (JoinManagement) Joining as a new service....
+INFO    [28/09/04 15:33:04] (ConnectionPool) Connection Shutdown hook added
+INFO    [28/09/04 15:33:04] (ConnectionPool) Connection Pool: Unlimited connections available.
+INFO    [28/09/04 15:33:04] (CheckConnection) Starting connection check thread in 10secs
+WARNING [28/09/04 15:33:04] (SQLConnection) Serializable Transaction Isolation Not supported by driver: java.sql.SQLException: This function is not supported
+INFO    [28/09/04 15:33:04] (ConnectionPool) Creating connection 0....
+INFO    [28/09/04 15:33:04] (ConnectionPool) Creating connection 1....
+INFO    [28/09/04 15:33:04] (ConnectionPool) Creating connection 2....
+INFO    [28/09/04 15:33:04] (ConnectionPool) Creating connection 3....
+System is now initialised
+INFO    [28/09/04 15:33:04] (ServiceApplication) System is joined!
+Checking
+INFO    [28/09/04 15:33:14] (CheckConnection) Starting connection checking
+</pre>
+</td></tr></table></center>
+<p><b>Note:</b>The WARNING message regarding transaction isolation; Athena will ALWAYS ask a database to support TRANSACTION_SERIALIZABLE. In this case, HSQLDB doesn't support 
+serializable isolation, and therefore the warning message is displayed</p> 
+<p>Now all that remains to be done is check that you can query the database</p>
+Load any <a href="http://serviceui.jini.org">Service UI</a> capable lookup browser, and select thegroup your registered Athena with. Athena should be visible under the name
+you gave it in the configuration file, in our example this is 'HSQLDB'.<br/>
+<p>Bringing up Athena's mainUI will immediately display some of the properties, such as JDBC URL,  and Operating System related information for Athena.
+If you click on the 'Grid' tab and type 'SELECT * from ATHENATEST' in the Query text field, and then click 'Execute', you should see at least one row</p>
+<center>
+<img src="images/athena_hsql_grid.png"/><br/>
+<font size=-1>Fig2: Athena ServceUI Grid</font>
+</center><br/>
+You can download the sample database and a sample configuration from <a href="http://athena.jini.org/files/documents/439/331/athena_hsql_tutorial.zip">here</a>, although you will have to change the configuration file accordingly, and create your Thor settings XML file.
+
+<br/><br/><hr><a href="index.html">Back to Overview</a>
+	</body>
+</html>
+
+</body>
+
+
+
+
+</html>

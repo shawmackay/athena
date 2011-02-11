@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>athenatest</name>
+    <context key="SYS1">
+    <params>
+	    <param name="code" validation="NOTNULL|REQUIRED"/>
+		<param name="description" validation="NOTNULL|REQUIRED"/>
+		<param name="quantity" validation="NOTNULL|REQUIRED"/>
+    </params>
+    <command type="replace">
+		<command-text>
+	    INSERT into AthenaTest(CODE,DESCRIPTION, QUANTITY)  VALUES('${code}', '${description}',${quantity})
+	    </command-text>
+    </command>
+    </context>
+</chi>
+

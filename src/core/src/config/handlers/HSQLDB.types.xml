@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+
+<types>   
+    <type name="address">
+        <object>
+            <field name="prcu_id" />
+            <field name="addr_id" />
+            <field name="line_1" type="quoted_string"/>
+            <field name="line_2" type="quoted_string"/>                                    
+            <field name="line_3" type="quoted_string"/>
+            <field name="line_4" type="quoted_string"/>
+            <field name="postcode" />
+            <field name="add_type" />
+            <field name="from_date" type="sqldate"/>
+            <field name="to_date" type="sqldate"/>
+            <field name="tel_num" />
+            <field name="ex_dir" />
+        </object>
+    </type>
+    <type name="case">
+        <object>
+            <field name="case_ref" />
+            <field name="prop_scanned_date" type="sqldate"/>
+            <field name="exchange_date" type="sqldate"/>
+            <field name="lead_pol_no" />                                    
+            <field name="uw_status" />
+            <field name="sw_procedure_name" />
+            <field name="exchange_chase_date" type="sqldate"/>
+            <field name="sw_print_at_flag" />
+            <field name="chaseup_issued" />
+            <field name="date_loaded" type="sqldate"/>
+        </object>
+    </type>
+    <type name="type_struct">
+        <object>
+            <field name="val"/>
+            <field name="date"/>
+        </object>
+    </type>
+
+    <type name="dummy">
+        <object>
+            <field name="name"/>
+        </object>
+    </type>
+    <type name="policy_no">
+        <expression ex="\d{6}[A-Z]"/>
+    </type>
+    <type name="capsil_date">
+        <transform class="org.jini.projects.athena.command.types.transforms.MFrameDate_type"/>
+        <allowabletransforms>
+            <java type="java.util.Date"/>
+            <java type="java.sql.Date"/>            
+        </allowabletransforms>
+    </type>
+    <type name="quoted_string">
+        <transform class="org.jini.projects.athena.command.types.transforms.QuotedString_type"/>
+        <allowabletransforms>
+			<java type="java.lang.String"/>
+        </allowabletransforms>
+    </type>
+    
+    <type name="sqldate">
+        <transform class="org.jini.projects.athena.command.types.transforms.SQLDate_type"/>
+        <allowabletransforms>
+            <java type="java.util.Date"/>          
+            <java type="java.lang.String"/>
+        </allowabletransforms>
+    </type>
+    <type name="codetype">
+    	<expression ex="[A-Z]{5}"/>
+    </type>
+    
+    <type name="prcu">
+    	<expression ex="\d{5}"/>
+    </type>
+</types>

@@ -1,0 +1,48 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.cwa.co.uk">
+	<command callname="JCAD" type="update">
+		<param name="naad_ref" value="HOPE000695"/>
+		<param name="cli_addr_1" value="1 The House"/>
+		<param name="cli_addr_2" value="The Street"/>
+		<param name="cli_addr_3" value="The Village"/>
+		<param name="cli_addr_4" value="AnyTown"/>
+		<param name="cli_addr_5" value="A County"/>
+		<param name="cli_postcode" value="AB1 2CD"/>
+		<param name="cli_home_tel" value="01234567890"/>
+		<param name="cli_work_tel" value="0987654321"/>
+	</command>
+<command callname="JCAD" type="update">
+		<param name="naad_ref" value="HOPE000695"/>
+		<param name="cli_addr_1" value="2 The House"/>
+		<param name="cli_addr_2" value="The Street"/>
+		<param name="cli_addr_3" value="The Village"/>
+		<param name="cli_addr_4" value="AnyTown"/>
+		<param name="cli_addr_5" value="A County"/>
+		<param name="cli_postcode" value="AB1 2CD"/>
+		<param name="cli_home_tel" value="01234567890"/>
+		<param name="cli_work_tel" value="0987654321"/>
+	</command>
+	<command callname="JCAD" type="update">
+		<param name="naad_ref" value="HOPE000695"/>
+		<param name="cli_addr_1" value="3 The House"/>
+		<param name="cli_addr_2" value="The Street"/>
+		<param name="cli_addr_3" value="The Village"/>
+		<param name="cli_addr_4" value="AnyTown"/>
+		<param name="cli_addr_5" value="A County"/>
+		<param name="cli_postcode" value="AB1 2CD"/>
+		<param name="cli_home_tel" value="01234567890"/>
+		<param name="cli_work_tel" value="0987654321"/>
+	</command>
+	<command callname="JCAD" type="update">
+		<param name="naad_ref" value="HOPE000695"/>
+		<param name="cli_addr_1" value="8 The House"/>
+		<param name="cli_addr_2" value="The Street"/>
+		<param name="cli_addr_3" value="The Village"/>
+		<param name="cli_addr_4" value="AnyTown"/>
+		<param name="cli_addr_5" value="A County"/>
+		<param name="cli_postcode" value="AB1 2CD"/>
+		<param name="cli_home_tel" value="01234567890"/>
+		<param name="cli_work_tel" value="0987654321"/>
+	</command>
+	
+</harness:commands>

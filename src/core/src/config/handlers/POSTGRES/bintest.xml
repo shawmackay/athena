@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>imagetest</name>
+    <context key="SYS1">
+    <params>
+	    <param name="name" validation="NOTNULL|REQUIRED"/>
+		<param name="image" validation="NOTNULL|REQUIRED"/>
+    </params>
+    <command type="prepare">
+	    <command-text>
+	    	INSERT into imagetable(name, img)  VALUES(?,?)
+	    </command-text>
+    	<prepared-param type="string" index="1" comm-param="code"/>
+    	<prepared-param type="blob" index="2" comm-param="image"/>	    	
+    </command>
+    </context>
+</chi>
+

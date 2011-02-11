@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE></TITLE>
+  </HEAD>
+  <BODY>
+  Package holding all the classes for ResultSets and paged resultsets.<BR>
+  <HR>
+  <STRONG>Client ResultSets</STRONG><BR>
+  All resultsets implementing AthenaResultSet or RemoteResultSet, are generated through factories in <CODE><a href="../connection/AthenaConnection.html">AthenaConnection</a></CODE>
+  AthenaResultSet is implemented through a smart proxy system, allowing it to either be a <CODE>LOCAL</CODE> ResultSet,
+  i.e. all interactions with the data are done inside objects in the proxy within the client's VM, or 
+  can be linked to a RemoteImplementation within an Athena Instance (<CODE>DISCONNECTED</CODE> or <CODE>REMOTE</CODE>.<BR>
+   New implementations can be built, to be forwarded through these factories.<BR><BR>
+  <STRONG>System ResultSets</STRONG><BR>
+  Although <CODE>SystemResultSet</CODE> extends <CODE>AthenaResultSet</CODE>, it is used as a distinguishing marker for developers.<BR>
+  <CODE>SystemResultSet</CODE> classes are created by <CODE>SystemConnection</CODE> classes with the same prefix,
+  i.e. SQLConnection classes create SQLResultSet classes, etc.
+  These classes represent tabular-like data created as a result of a command against a given system.
+  This does not necessarily mean that this data is being accessed through the physical datasource.<BR>
+  For instance, in the case of <CODE>SQLConnection</CODE>, it creates a <CODE>SQLResultSet</CODE> object for any SELECT queries you may make.<BR>
+  The <CODE>SQLResultSet</CODE> object holds a reference to a <CODE>java.sql.ResultSet</CODE> object whose cursor 'exists' in the database.
+  On the other hand, for a non-JDBC datasource, the data that makes up your <CODE>SystemResultSet</CODE> object for that Connection type, 
+  may be passed back to the <CODE>SystemConnection</CODE>, in it's entirety, as the return data from a command execution.<BR>
+  In this instance, the data will be held in some way inside the <CODE>SystemResultSet</CODE> instance
+  </BODY>
+</HTML>

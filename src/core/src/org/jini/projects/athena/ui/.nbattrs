@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+    <fileobject name="AthenaPanel.java">
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="AthenaPanel"/>
+        <attr name="class_dependency_java.lang.Thread" stringvalue="AthenaPanel.Update"/>
+        <attr name="class_dependency_net.jini.lookup.ui.MainUI" stringvalue="AthenaPanel"/>
+        <attr name="class_dependency_java.io.Serializable" stringvalue="AthenaPanel"/>
+    </fileobject>
+    <fileobject name="SimpleConnectionListRenderer.java">
+        <attr name="class_dependency_javax.swing.JLabel" stringvalue="SimpleConnectionListRenderer"/>
+        <attr name="class_dependency_javax.swing.ListCellRenderer" stringvalue="SimpleConnectionListRenderer"/>
+    </fileobject>
+    <fileobject name="AthenaUIFact.java">
+        <attr name="class_dependency_net.jini.lookup.ui.factory.JComponentFactory" stringvalue="AthenaUIFact"/>
+        <attr name="class_dependency_java.io.Serializable" stringvalue="AthenaUIFact"/>
+    </fileobject>
+    <fileobject name="AthenaMonitorTable.java">
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="AthenaMonitorTable"/>
+        <attr name="class_dependency_athena.monitors.Monitor" stringvalue="AthenaMonitorTable"/>
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="AthenaMonitorTableModel"/>
+    </fileobject>
+    <fileobject name="ServiceFrame.java">
+        <attr name="class_dependency_java.lang.Thread" stringvalue="ServiceFrame.ConnPoller"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="ServiceFrame"/>
+    </fileobject>
+    <fileobject name=".nautilus-metafile.xml">
+        <attr name="org.apache.tools.ant.module.loader.AntProjectDataLoader.KNOWN_ANT_FILE" boolvalue="false"/>
+    </fileobject>
+    <fileobject name="ServiceTableRenderer.java">
+        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="ServiceTableRenderer"/>
+    </fileobject>
+</attributes>

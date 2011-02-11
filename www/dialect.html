@@ -1,0 +1,156 @@
+<html>
+<head>
+<title>Dialect Classes :: Athena</title>
+</head>
+<body>
+<h2>Dialect Classes</h2>
+Dialects provide the secondary part of the pre-processing of types and handling of commands, and because they need much more detailed knowledge about the host system Athena is interacting with, have been separated away from the more generic <a href="handlers.html">handlers</a><br/></br>
+<h3>The role of Dialects</h3>
+<em>If we have handlers, and we can validate and transform parameters in the HandlerEngine, why do we need dialects?</em><br/>
+Some validation and transformation cannot be done unless we know how Athena interacts with the host system. It is okay to validate expressions and use translators to modify the command parameters prior to handing them to the Connect, but what we actually do with these parameters, and how these are turned into something the Host understands is another matter. Hence dialects. Dialects provide a similar function as the type validation and modification of handlers, but because they are 'closer to the metal' of the host can do things which would otherwise tie the main Athena core into a particular datasource. For instance, the CTG dialect, knows about the request objects that are used when talking to CICS Transaction Gateway - if the Handlers had to know about these kind of classes, it would reduce the benefits of pluggable Connects and increase coupling.<br/><br/>
+Currently there are two types of Dialect - XML and Stored Procedure
+
+<h3>XML Dialects</h3>
+XML Dialects convert parameters into string representations - this is how commareas are built through Athena<br/>
+Look at the following dialect
+
+
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>&lt;?xml version="1.0" encoding="UTF-8" ?>
+&lt;xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    &lt;xsl:param name="customer">0000X&lt;/xsl:param>
+    &lt;xsl:param name="birthdate" select="2040101"/>
+    &lt;xsl:param name="orderdate" select="2040228"/> 
+    &lt;xsl:output method="text"/>
+    &lt;xsl:template match="/">
+        &lt;xsl:value-of select="$customer"/>
+        &lt;xsl:value-of select="$birthdate"/>
+        &lt;xsl:value-of select="$orderdate"/>
+    &lt;/xsl:template>
+&lt;:stylesheet>
+</pre>
+</font>
+</td></tr></table></center>
+This dialect is known as an 'in' dialect and is stored in the follwing directory &lt;athenaroot>/config/dialects/&lt;athenaservicename>/in/<br/>
+<br/>
+Athena will also need to process the data coming out of the datasource; an 'out' dialect -stored in &lt;athenaroot>/config/dialects/&lt;athenaservicename>/out/<br/>
+
+The following represents a dialect that will turn a commarea into a ResultSet
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>&lt;?xml version='1.0' ?>
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    &lt;xsl:template match="/">
+        &lt;OUTPUT>
+            &lt;xsl:apply-templates/>
+        &lt;/OUTPUT>
+    &lt;/xsl:template>
+    &lt;xsl:template match="INPUT">
+        &lt;xsl:variable name="data" select="normalize-space(./text())"/>
+        &lt;xsl:variable name="command" select="substring($data,1,1)"/>
+        &lt;xsl:variable name="customer" select="substring($data,2,5)"/>
+        &lt;xsl:variable name="orderdate" select="substring($data,7,6)"/>
+        &lt;xsl:variable name="recorddata" select="substring($data,13)"/>
+        &lt;param name="command">
+            &lt;xsl:value-of select="$command"/>
+        &lt;/param>
+        &lt;param name="customer">
+            &lt;xsl:value-of select="$customer"/>
+        &lt;/param>
+        &lt;param name="orderdate">
+            &lt;xsl:value-of select="$orderdate"/>
+        &lt;/param>
+        &lt;xsl:if test="$command!='A'">
+            &lt;data>
+                &lt;header>
+                    &lt;item name="date" index="0"/>
+                    &lt;item name="item" index="1"/>
+                &lt;/header>
+                &lt;xsl:call-template name="create-record-recursive">
+                    &lt;xsl:with-param name="data" select="$recorddata"/>
+                &lt;/xsl:call-template>
+            &lt;/data>
+        &lt;/xsl:if>
+    &lt;/xsl:template>
+    &lt;xsl:template name="create-record-recursive">
+        &lt;xsl:param name = "data"/>
+        &lt;xsl:variable name="list" select="normalize-space($data)"/>
+        &lt;xsl:choose>
+            &lt;xsl:when test="$data!=''">
+                &lt;xsl:variable name="head" select="substring-before($list,'~')"/>
+                &lt;xsl:variable name="tail" select="substring-after($list,'~')"/>
+                &lt;record>
+                    &lt;date>
+                        &lt;xsl:call-template name="mainframedate">
+                            &lt;xsl:with-param name="input" 
+                                select="substring($head,1,7)"/>
+                        &lt;/xsl:call-template>
+                    &lt;/date>
+                    &lt;ordereditem>
+                        &lt;xsl:value-of select="substring($head,8)"/>
+                    &lt;/ordereditem>
+                &lt;/record>
+                &lt;xsl:call-template name="create-record-recursive">
+                    &lt;xsl:with-param name="data" select="$tail"/>
+                &lt;/xsl:call-template>
+            &lt;/xsl:when>
+            &lt;xsl:otherwise>&lt;/xsl:otherwise>
+        &lt;/xsl:choose>
+    &lt;/xsl:template>
+    &lt;xsl:template name="mainframedate"> &lt;xsl:param name="input"/> &lt;xsl:variable 
+        name="year" select="number(substring($input,1,3))"/> &lt;xsl:variable 
+        name="year" select="$year+1800"/> &lt;xsl:variable name="month" 
+        select="substring($input,4,2)"/> &lt;xsl:variable name="day" 
+        select="substring($input,6,2)"/> &lt;xsl:value-of 
+        select="$day"/>/&lt;xsl:value-of select="$month"/>/&lt;xsl:value-of 
+        select="$year"/> &lt;/xsl:template>
+&lt;/xsl:stylesheet>
+</pre>
+</font>
+</td></tr></table></center>
+<br/>
+This would yield an XML document similar to the following
+
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>&lt;OUTPUT>
+	&lt;param name="command">R&lt;/param>
+	&lt;param name="customer">>1452B&lt;/param>
+	&lt;param name="orderdate">2040228&lt;/param>
+	&lt;data>
+		&lt;header>
+			&lt;item name="date" index="0"/>
+			&lt;item name="ordereditem" index="1"/>
+                &lt;/header>
+		&lt;record>
+			&lt;date>01/01/2004&lt;/date>
+			&lt;ordereditem>Widget Type 1&lt;/ordereditem>
+		&lt;/record>
+		&lt;record>
+			&lt;date>18/02/2004&lt;/date>
+			&lt;ordereditem>Gadget Mark III&lt;/ordereditem>
+		&lt;/record>
+		&lt;record>
+			&lt;date>19/02/2004&lt;/date>
+			&lt;ordereditem>Foo, by Bar&lt;/ordereditem>
+		&lt;/record>
+	&lt;/data>
+&lt;/OUTPUT>
+</pre></font></td></tr></table></center>
+<br/>
+Athena recognises the tabular structure (data and record tags) and returns this as a ResultSet<br/>
+To all intents and purposes, the developer doesn't know that it wasn't a table to begin with<br/>
+<h4>Associating Dialects</h4>
+You associate a dialect with a handler in the &lt;athenaroot>/config/XSLTransforms.xml file. Currently is not segregated into Athena instances, but will have to be in the future.
+<h3>Stored Procedure dialects</h3>
+Stored Procedure dialects are slightly different in deployment than XML Dialects - their definitions are taken from the database, you only need to tell Athena which stored procedures you are interested in. And Athena does the rest.<br/><br/><hr><a href="index.html">Back to Overview</a>
+</body>
+</html>

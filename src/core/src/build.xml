@@ -1,0 +1,274 @@
+<project name="athena" default="dist" basedir="..">
+	<!-- set global properties for this build -->
+	<property name="src" value="./src" />
+	<property name="build" value="./build/classes" />
+
+
+	<property name="distRoot" value="./dist" />
+	<property name="dist" value="${distRoot}/${ant.project.name}" />
+
+	<property name="bin" value="${dist}/bin" />
+	<property name="conf" value="${dist}/config" />
+	<property name="data" value="${dist}/data" />
+	<property name="doc" value="${dist}/doc" />
+	<property name="javadoc" value="${dist}/doc/api" />
+	<property name="lib" value="${dist}/lib" />
+	<property name="logs" value="${dist}/logs" />
+	<property name="store" value="${dist}/store" />
+	
+
+	<property name="codebase" value="http://localhost:8086" />
+
+	<property name="javalib" value="/Volumes/Data/Development/Java/Libs" />
+	
+	<property name="jinilib" value="/Volumes/Data/Development/Java/Jini2.1/lib" />
+	<property name="jinilib-dl" value="/Volumes/Data/Development/Java/Jini2.1/lib-dl" />
+	<property name="groovydir" value="/Volumes/Data/Development/Java/groovy-1.0" />
+
+
+	<property name="thor_loc" value="/Users/calum/Documents/workspace/thor/dist/lib/thor-itf.jar" />
+	<property name="eros_loc" value="/Users/calum/Documents/workspace/eros/dist/eros/lib/eros-itf.jar" />
+
+	<!--<property name="build.compiler" value="extJavac"/>-->
+	<taskdef name="install" classname="org.jini.projects.lamplighter.installer.LamplighterTask" />
+
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+
+		<path id="project.class.path">
+
+			<!--<fileset dir="c:\j2sdk1.4.2_05\jre\lib" includes="tools.jar" />-->
+			<!-- Include specific project directories -->
+			<fileset dir="${javalib}">
+				<include name="serviceui-1.1a.jar" />
+				<include name="glyph.jar" />
+			</fileset>
+
+		</path>
+		<path id="groovy.class.path">
+			<fileset dir="${groovydir}/lib">
+				<include name="groovy-1.0*.jar" />
+				<include name="asm-util-1.4.3..jar" />
+				<include name="asm-1.4.3.jar" />
+			</fileset>
+		</path>
+		<path id="jini.class.path">
+			<fileset dir="${jinilib}">
+				<include name="jini*.jar" />
+				<include name="sun-util.jar" />
+				<include name="jsk-platform.jar" />
+			</fileset>
+		</path>
+		<path id="thirdparty.class.path">
+			<pathelement location="${thor_loc}" />
+			<pathelement location="${eros_loc}" />
+		</path>
+
+
+	</target>
+
+
+	<target name="compile" depends="init">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac debug="true" deprecation="true" destdir="${build}" srcdir="${src}" target="1.4" source="1.4" >
+			<classpath refid="project.class.path" />
+			<classpath refid="jini.class.path" />
+			<classpath refid="groovy.class.path" />
+			<classpath refid="thirdparty.class.path" />
+		</javac>
+		<!--<rmic base="${build}" includes="**/Remote*Impl.class,**/AthenaLandlord.class,**/RMIChunkerImpl.class,
+    **/AthenaRegistrationImpl.class,**/DisconnectedResultSetImpl.class,**/SystemConfigChangeListener.class,**/AthenaAdminImpl.class">
+			<classpath refid="project.class.path" />	
+			<classpath refid="jini.class.path" />		
+			<classpath refid="thirdparty.class.path" />					
+		</rmic>-->
+	</target>
+	<target name="dist" depends="compile">
+		<!-- Create the distribution directory -->
+		<!-- Ensure the icons for the serviceUI are copied-->
+
+		<copy todir="${build}/org/jini/projects/athena/service/">
+			<fileset dir="${src}/org/jini/projects/athena/service/" includes="**/*.gif" />
+		</copy>
+		<copy todir="${build}/config">
+			<fileset dir="${src}/config" includes="**/*" />
+		</copy>
+		
+		<mkdir dir="${lib}" />
+		<mkdir dir="${conf}" />
+		<copy todir="${conf}" file="${src}/config/exportmgr.config"/>
+			<copy todir="${conf}" file="${src}/config/policy.all"/>		
+		<mkdir dir="${conf}/dialects" />
+		<mkdir dir="${conf}/dialects/sample" />
+		<mkdir dir="${conf}/dialects/sample/out" />
+		<mkdir dir="${conf}/dialects/sample/in" />
+		<mkdir dir="${conf}/handlers" />
+		<mkdir dir="${conf}/handlers/sample" />
+		<copy todir="${conf}/handlers/sample">
+			<fileset dir="${src}/config/handlers/sample" includes="**/*" />
+		</copy>
+		<copy todir="${conf}/dialects/sample">
+			<fileset dir="${src}/config/dialects/sample" includes="**/*" />
+		</copy>
+
+		<mkdir dir="${logs}" />
+		<mkdir dir="${bin}" />
+		<mkdir dir="${data}" />
+		<!-- Build the core appliation into a daily build jar-->
+		<jar jarfile="${lib}/athena-core.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/**/*" />
+			<!--			<fileset dir="${build}" includes="config/**/*" />-->
+		</jar>
+		<unjar src="${thor_loc}" dest="${dist}/tmp" />
+		<unjar src="${eros_loc}" dest="${dist}/tmp" />
+		<jar jarfile="${lib}/athena-core-depend.jar">
+			<fileset dir="${dist}/tmp" includes="org/jini/projects/thor/**/*.class" />
+			<fileset dir="${dist}/tmp" includes="org/jini/projects/eros/**/*.class" />
+		</jar>
+		<!-- Create the Jini download file -->
+		<mkdir dir="${dist}/tmp" />
+		<unjar src="${jinilib-dl}/sdm-dl.jar" dest="${dist}/tmp" />
+		<unjar src="${jinilib}/jini-ext.jar" dest="${dist}/tmp" />
+		<unjar src="${javalib}/serviceui-1.1a.jar" dest="${dist}/tmp" />
+
+		<jar jarfile="${dist}/lib/athena-dl.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/**/*Stub.class" />
+			<fileset dir="${build}" includes="**/service/ui/*.class" />
+			<fileset dir="${build}" includes="**/*.gif" />
+			<fileset dir="${build}" includes="**/exception/*.class" />
+			<fileset dir="${build}" includes="**/*Exception.class" />
+			<fileset dir="${build}" includes="**/*TransformInfo.class" />
+			<fileset dir="${build}" includes="**/AthenaResultSet.class" />
+			<fileset dir="${build}" includes="**/AthenaResultSetImpl.class" />
+			<fileset dir="${build}" includes="**/SystemResultSet.class" />
+			<fileset dir="${build}" includes="**/Monitor.class" />
+			<fileset dir="${build}" includes="**/HashedStatisticRow.class" />
+			<fileset dir="${build}" includes="**/StatisticRow.class" />
+			<fileset dir="${build}" includes="**/*AdminProxy.class" />
+			<fileset dir="${build}" includes="**/AthenaAdmin.class" />
+			<fileset dir="${build}" includes="**/ArrayType.class" />
+			<fileset dir="${build}" includes="**/ObjectType.class" />
+			<fileset dir="${build}" includes="**/ScalarType.class" />
+			<fileset dir="${build}" includes="**/Type.class" />
+			<fileset dir="${build}" includes="**/LeasedConnection.class" />
+			<fileset dir="${build}" includes="**/AthenaConnection.class" />
+			<fileset dir="${build}" includes="**/CacheManager*.class" />
+			<fileset dir="${build}" includes="**/*ServiceType.class" />
+			<fileset dir="${build}" includes="**/AthenaRegistration.class" />
+			<fileset dir="${build}" includes="**/AthenaConnectionImpl.class" />
+			<fileset dir="${build}" includes="**/*RemoteResultSet.class" />
+			<fileset dir="${build}" includes="**/*Details.class" />
+			<fileset dir="${build}" includes="**/Pool.class" />
+			<fileset dir="${build}" includes="**/RMIChunker.class" />
+			<fileset dir="${build}" includes="**/RemoteConnection.class" />
+			<fileset dir="${build}" includes="**/ChunkedResultSetImpl.class" />
+			<fileset dir="${build}" includes="**/BEAJoltComman*.class" />
+			<fileset dir="${build}" includes="**/*ConfigChangeListener.class" />
+			<fileset dir="${build}" includes="**/*Std*.class" />
+			<fileset dir="${build}" includes="**/Command.class" />
+			<fileset dir="${build}" includes="**/Array.class" />
+			<fileset dir="${build}" includes="org/jini/projects/athena/service/constrainable/*.class" />
+			<fileset dir="${build}" includes="**/Compound*.class" />
+			<fileset dir="${dist}/tmp" includes="net/jini/entry/*.class" />
+			<fileset dir="${dist}/tmp" includes="net/jini/lookup/*Stub.class" />
+			<fileset dir="${dist}/tmp" includes="net/jini/lookup/entry/**/*.class" />
+			<fileset dir="${dist}/tmp" includes="net/jini/lookup/ui/**.class" />
+			<fileset dir="${dist}/tmp" includes="net/jini/lookup/ui/attribute/*.class" />
+			<fileset dir="${dist}/tmp" includes="com/artima/lookup/util/*.class" />
+		</jar>
+		<echo>Copy ${lib}/athena-dl.jar to your http codebase server</echo>
+
+		<!-- Create the client interface file -->
+		<jar jarfile="${lib}/athena-itf.jar">
+			<fileset dir="${build}" includes="**/*Exception.class" />
+			<fileset dir="${build}" includes="**/Command.class" />
+			<fileset dir="${build}" includes="**/CompoundType.class" />
+			<fileset dir="${build}" includes="**/Array.class" />
+			<fileset dir="${build}" includes="**/AthenaResultSet.class" />
+			<fileset dir="${build}" includes="**/AthenaRegistration.class" />
+			<fileset dir="${build}" includes="**/AthenaConnection.class" />
+			<fileset dir="${build}" includes="**/AthenaAdmin.class" />
+			<fileset dir="${build}" includes="**/AthenaAdminProxy.class" />
+		</jar>
+		<jar jarfile="${lib}/athena-client.jar">
+			<fileset dir="${build}" includes="org/jini/projects/athena/harness/**/*.class" />
+		</jar>
+		<copy todir="${dist}/lib" file="${javalib}/glyph.jar"/>
+		
+		<echo>Copy athena-itf.jar to the your java library directory (d:\jl)</echo>
+		<install productname="Athena" license="${src}/LICENSE.txt" readme="${src}/README.txt" directoryToJar="${dist}" outputname="AthenaBeta3" launcherconfig="${src}/launcherconfig.xml" prerequisites="${src}/prerequisites.html" scriptpackdir="${src}/scriptpacks" logofile="${src}/org/jini/projects/athena/service/athenamono.gif" />
+	</target>
+	<target name="scripts" depends="init">
+		<pathconvert targetos="unix" refid="project.class.path" property="scriptclasspath" />
+		<pathconvert targetos="windows" refid="project.class.path" property="scriptclasspath_win32" />
+		<echo file="${bin}/runathena.sh">
+export JINILIBS=${jinilib}/jini-ext.jar:${jinilib}/sun-util.jar:${javalib}/serviceui-1.1.jar
+export STUBHOST=${codebase}
+export ATHENACLASSPATH=${scriptclasspath}
+echo -------------------------
+echo      Starting Athena
+echo -------------------------
+export LOGLEVEL=FINE
+echo Ensure that your classes for your host connections are specified in the DRIVERLIBS environment variable
+java -server -classpath .:lib/athena-core.jar:$JINILIBS:lib/athena-core-depend.jar:$DRIVERLIBS:$ATHENACLASSPATH -Dorg.jini.projects.athena.loglevel=$LOGLEVEL -Djava.security.policy=config/policy.all -Djava.rmi.server.codebase=$STUBHOST/athena-dl.jar org.jini.projects.athena.ServiceApplication $1
+</echo>
+		<echo file="${bin}/runathena.bat">
+@echo off
+set JINI_LIB_DIR=${jinilib}			
+set JINILIBS=%JINI_LIB_DIR%/jini-ext.jar;%JINI_LIB_DIR%/sun-util.jar;%JINI_LIB_DIR%/serviceui-1.1.jar
+set STUBHOST=${codebase}			
+set ATHENACLASSPATH=${scriptclasspath_win32}
+set LOGLEVEL=FINE
+echo -------------------------
+echo      Starting Athena
+echo -------------------------
+echo Ensure that your classes for your host connections are specified in the DRIVERLIBS environment variable
+java -server -classpath .;lib\athena-core.jar;%JINILIBS%;lib/athena-core-depend.jar;%DRIVERLIBS%;%ATHENACLASSPATH%  org.jini.projects.athena.ServiceApplication %1
+</echo>
+		<echo file="${conf}/policy.all">
+grant {
+    permission java.security.AllPermission "", "";
+};
+</echo>
+	</target>
+
+	<target name="all" depends="dist,copyconfig,scripts,javadoc" />
+
+
+	<target name="javadoc" depends="init">
+		<mkdir dir="${javadoc}" />
+		<echo>${user.dir}</echo>
+		<echo>-tagletpath ${classes} @${basedir}/jdtags</echo>
+		<javadoc destdir="${javadoc}" packagenames="org.jini.projects.athena.*" additionalparam=" @jdtags" stylesheetfile="${src}/stylesheet.css" overview="${src}/overview.html">
+
+			<sourcepath>
+				<pathelement location="${src}" />
+			</sourcepath>
+			<classpath refid="project.class.path" />
+			<classpath refid="jini.class.path" />
+			<classpath refid="thirdparty.class.path" />
+			<!--            
+            <link href="http: Link to j2sdk docs"/>
+            <link href="http: Link to Jini2.0 docs"/>
+            
+            -->
+		</javadoc>
+	</target>
+
+
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<!--delete dir="${build}"/>-->
+		<delete dir="${dist}" />
+		<delete dir="${build}" />
+	</target>
+	<target name="copyconfig">
+		<copy todir="${conf}">
+			<fileset dir="src/config" includes="**/*" />
+		</copy>
+	</target>
+</project>

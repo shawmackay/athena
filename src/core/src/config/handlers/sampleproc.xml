@@ -1,0 +1,5 @@
+<procedures>
+    <!-- Format is OWNER.PACKAGE.PROCEDURE -->
+    <procedure name="SCOTT..MYPROCEDURE"/>
+    <procedure name="SCOTT.MYPACKAGE.MYPROCEDURE"/>
+</procedures>

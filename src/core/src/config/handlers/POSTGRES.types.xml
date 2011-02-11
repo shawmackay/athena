@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Some useful, some not, sample types for Athena -->
+
+
+<types>   
+    <type name="address">
+        <object>
+            <field name="prcu_id" />
+            <field name="addr_id" />
+            <field name="line_1" type="quoted_string"/>
+            <field name="line_2" type="quoted_string"/>                                    
+            <field name="line_3" type="quoted_string"/>
+            <field name="line_4" type="quoted_string"/>
+            <field name="postcode" />
+            <field name="add_type" />
+            <field name="from_date" type="sqldate"/>
+            <field name="to_date" type="sqldate"/>
+            <field name="tel_num" />
+            <field name="ex_dir" />
+        </object>
+    </type>
+    
+    <type name="type_struct">
+        <object>
+            <field name="val"/>
+            <field name="date"/>
+        </object>
+    </type>
+
+    <type name="dummy">
+        <object>
+            <field name="name"/>
+        </object>
+    </type>
+    <type name="id_no">
+        <expression ex="\d{6}[A-Z]"/>
+    </type>
+    
+    <!-- Creates a properly formatted String for use in 'replace' handlers where the original string contains an apostrophe -->
+    
+    <type name="reverse">
+        <transform class="athena.command.types.transforms.ReverseTransform"/>
+        <allowabletransforms>
+			<java type="java.lang.String"/>
+        </allowabletransforms>
+    </type>
+    
+    <type name="sqldate">
+        <transform class="athena.command.types.transforms.SQLDate_type"/>
+        <allowabletransforms>
+            <java type="java.util.Date"/>          
+            <java type="java.lang.String"/>
+        </allowabletransforms>
+    </type>
+    
+
+</types>

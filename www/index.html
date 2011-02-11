@@ -1,0 +1,81 @@
+<HTML>
+<HEAD>
+<TITLE>Athena Overview</TITLE>
+</HEAD>
+<BODY> 
+<img src="images/athena_off.jpg"\><br/> 
+<br/> 
+<b>Athena 1.0 beta 3 <a href="#downloads">released!</a></b><br/> 
+<br/> 
+Athena is a transactional bridge that allows your databases and other non-RDBMS datasources to participate in Jini distributed transactions.<br/> 
+It is designed to be a universal service front-end with a pluggable host connection to any datasource<br/> 
+<h3>Athena Overview</h3> 
+<font size="-1">Click on an area for more information</font> <IMG NAME="athena_sections0" SRC="images/athena_sections.jpg" WIDTH="640" HEIGHT="480" BORDER="0" USEMAP="#athena_sections"> 
+<MAP NAME="athena_sections"> 
+  <AREA SHAPE="rect" COORDS="99,73,156,217" HREF="connections.html" ALT="Connections"> 
+  <AREA SHAPE="rect" COORDS="203,39,376,201" HREF="handlers.html"> 
+  <AREA SHAPE="rect" COORDS="179,236,339,264" HREF="servicemgmt.html"> 
+  <AREA SHAPE="rect" COORDS="182,321,281,377" HREF="caches.html"> 
+  <AREA SHAPE="rect" COORDS="97,239,151,386" HREF="resultsets.html"> 
+  <AREA SHAPE="rect" COORDS="484,241,622,281" HREF="translate.html"> 
+  <AREA SHAPE="rect" COORDS="485,150,622,189" HREF="dialect.html"> 
+  <AREA SHAPE="rect" COORDS="487,65,622,105" HREF="connect.html"> 
+  <AREA SHAPE="rect" COORDS="408,63,466,207" HREF="connections.html"> 
+  <AREA SHAPE="rect" COORDS="180,280,316,308" HREF="persistence.html"> 
+  <AREA SHAPE="rect" COORDS="299,336,414,365" HREF="recovery.html"> 
+</MAP> 
+<br/> 
+Athena 1.0 beta 3 has been released. Get it <a href="http://athena.jini.org/files/documents/439/368/AthenaBeta3.jar">here</a> 
+<table> 
+  <tr> 
+    <td colspan="2">Changes in Beta 3</td> 
+  </tr> 
+  <tr> 
+    <td>&nbsp;</td> 
+    <td> <ul> 
+        <li>Added support for (get)(set)BinaryStream for manipulating binary objects</li> 
+        <li>Support for declaring prepared statements</li> 
+        <li>Changed handler XML structure to support above</li> 
+      </ul></td> 
+  </tr> 
+  <tr> 
+    <td colspan="2">Changes in Beta 2</td> 
+  </tr> 
+  <tr> 
+    <td>&nbsp;</td> 
+    <td> <ul> 
+        <li>Added support for datasource specific actions in shut down hooks after Jini termination</li> 
+        <li>Support for <a href="hsql_started.html">Embedded databases</a></li> 
+        <li>Scripts moved from &lt;athenaroot>/bin to &lt;athenaroot></li> 
+        <li>New scripts added for re-running post install and Configuration editor</li> 
+      </ul></td> 
+  </tr> 
+  <tr> 
+    <td colspan="2">Changes in Beta 1</td> 
+  </tr> 
+  <tr> 
+    <td>&nbsp;</td> 
+    <td> <ul> 
+        <li>Support for secure exporters for Connections instances</li> 
+        <li>Fixed memory leak for exporters such as transaction participants being held in memory too long - not being explicitly unexported</li> 
+        <li>Ability to schedule exported proxies to be unexported and cleared up after a set time</li> 
+        <li>Modified startup to use Configurations more</li> 
+        <li>A proper installer - just double click or execute the jar.</li> 
+        <li>More configurable logging and System.out=>Logging changes.</li> 
+        <li>Better offline checking - when your data source goes offline, Athena leaves the groups it is registered with, rejoining when the datasource is available again.</li> 
+      </ul></td> 
+  </tr> 
+</table> 
+<br/> 
+<h3>Javadocs</h3> 
+JavaDocs are available as a jar <a href="http://athena.jini.org/files/documents/439/333/athenadoc.jar">archive</a> here.</br> 
+<h3>Tutorials</h3> 
+<ul> 
+  <li><a href="starting.html">Getting Started</a> shows how to configure and test Athena against PostgreSQL and the steps are easily adapted for other systems.</li> 
+  <li>The <a href="servicemgmt.html">Service Management</a> page shows some of the serviceUI screens that you can use to monitor Athena at runtime</li> 
+  <li>Using <a href="hsql_started.html">HSQLDB with Athena</a></li> 
+</ul> 
+<h3>Contact</h3> 
+Please view or join the Athena <a href="http://athena.jini.org/servlets/ProjectMailingListList">mailing lists</a>, or alternatively, if you have any issues or problems with Athena, log them in the <a href="http://athena.jini.org/servlets/ProjectIssues">issue tracker</a> 
+</BODY>
+</HTML>

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "file:///usr/share/screem/dtd/loose.dtd">
+<html>
+	<head>
+		<title>ResultSet Classes :: Athena</title>
+		<meta name="author" content="" >
+		<meta name="keywords" content="" >
+		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" >
+		<meta http-equiv="Content-Script-Type" content="text/javascript" >
+		<meta http-equiv="Content-Style-Type" content="text/css" >
+	</head>
+	<body>
+<h2>ResultSet Classes</h2>
+Athena currently supports 3 main types of resultset, however, these could easily be extended, perhaps adding support like compression, or encryption.<br/><br/>
+The three main types are:<br>
+<ul>
+<li>RemoteResultSets</li>
+<li>LocalResultSets</li>
+<li>DisconnectedResultSets</li>
+</ul>
+<h3>Remote Resultsets</h3>
+Remote resultSets are always built internally using either the SystemResultSet returned by the call through the Connect, or in some cases, by invoking the command against the SystemConnection representing the Connect, in the RemoteResultSet constructor.<br/>If the connection has set it's connectionType to AthenaConnection.REMOTE, the RemoteResultSet, will be exported and returned to the user as a Remote object. Unfortunately, as this is backed by a SystemResultSet, all operations on a RemoteResultSet, require Remote calls from the client for every operation on the ResultSet, and requires calls into the Connect, and possibly, through to the host datasource (this happens in any JDBC Connect). <br/><br/>Therefore, there are very few reasons to use RemoteResultSet as a client end object, one possibility is random statistical sampling on very large datasets, where the over head of serializing the entire table to the client is too high, for the small amount of data picked from the whole set. However, they do use a minimum of resources at the client<br/><br/>
+<h3>Local Resultsets</h3>
+Local resultSets, are represented inside the AthenaResultSetImpl class, that is returned from every query issued, regardless of the ConnectionType set. This is because AthenaResultSetImpl, is a smart proxy which checks if it's RemoteResultSet reference is null. If it is, then the SmartProxy itself contains the resultset - hence Local Resultset.
+LocalResultSets are the fastest for processing, because all return data from the operation is transferred to the client, and they don't hold any references to any remote objects. <br/<br/>The downsides of Local ResultSets is the memory required to host the entire table internally, and the time it takes to build and serialize the table. The bigger the table, the more memory is required to host it in the client, and the longer the initial call to execute the query. Also, the query, may not actually return many rowqs, but if the rows contains LOBs then the same issues occur.<br/>
+<h3>Disconnected Resultsets</h3>
+To solve some of the problems associated with Local Resultsets, a third option is available, Disconnected Resultsets. These are not disconnected by way of the client is disconnected from Athena, but rather that Athena loads in all the data from the host and Athena the relinquishes the Connect's resource for the table/query. <br/><br/>This stops remote calls, to Athena always cascading through to the datasource, but could still have lots of remote calls to Athena from the client, for every operation on the dataset.<br/><br/>Disconnected Resultsets also solve this by breaking up the data into small chunks (hence Disconnected), and storing them to disk.It only transfers a chunk when asked to by the client. Thus the client, gets LocalResultSet performance whilst using a chunk, a smaller memory footprint, yet only makes remote calls when the boundaries of a chunk are crossed.<br/> To the developer, this is completely transparent, and also means that the result of the execute*Query call is delivered much faster than it would be if Athena were to return a fully Localised ResultSet. The disk-based chunks are cleaned up when the connection is released.<br/><br/><hr>
+
+<a href="index.html">Back to Overview</a>
+	</body>
+</html>

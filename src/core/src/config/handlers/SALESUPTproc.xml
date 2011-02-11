@@ -1,0 +1,6 @@
+<procedures>
+    <!-- Format is OWNER.PACKAGE.PROCEDURE -->
+    <procedure name="SALESUPP.PKG_CORRESPONDENCE.CORRES_MAINT"/>
+    <procedure name="SALESUPP.PKG_CONTACT_CENTRE.CC_CASE_LOAD_NO_COMM"/>
+    <procedure name="SALESUPP.PKG_CONTACT_CENTRE.CC_CASE_UPD_NO_COMMS"/>        
+</procedures>

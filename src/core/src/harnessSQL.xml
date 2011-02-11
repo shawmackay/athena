@@ -1,0 +1,6 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.cwa.co.uk">
+	<command callname="addselect" type="query">
+		<param name="prcu_id" value="18144"/>
+	</command>	
+</harness:commands>

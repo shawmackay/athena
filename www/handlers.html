@@ -1,0 +1,201 @@
+<html>
+<head>
+<title>Handler Classes :: Athena</title>
+</head>
+<body>
+<h2>Handler Classes</h2>
+Athena's handler classes form part of Athena's Command Host Interface or CHI, along with <a href="dialect.html">dialects</a> types, and commands<br/>
+Before we go too much into handlers, it's probably best to explain a little about commands.<br/>
+<h3>Commands</h3>
+A Command in Athena, is based upon a call name and a set of parameters, similar to say a method call, or a stored procedure.<br/>
+<code>Command</code> is an interface, and if required, a Connect can define it's own specific Command implementation.<br/><br/>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<em>Things to note when creating a new Command type</em><ul>
+<li>Parameterless constructor - When you invoke <code>getCommand()</code> on a Connection, it downloads the specific instance through the Connect, but it only does this once, and for every other time call Class.newInstance() on the existing Command</li>
+<li> Should not rely on any internal classes in the Athena Instance</li>
+<li>Should be added to the server codebase, either in the athena-dl.jar or by using multiple codebases</li>
+</ul>
+</font>
+</td></tr>
+</table>
+</center>
+<br/>
+The callname part of a command is the same as the name of the handler definition, we'll get  to this later. The parameters are key-value pairs and will be used in the handler. (if a parameter is set that is not used by the handler, it will be ignored). Commands also allow more complex types to be added, such as CompoundTypes, and Arrays<br/>
+<br/>
+Commands do not have to have any correlation to any particular host system or type<br/><br/>
+Once a command has been constructed you can then use it in the execute... methods of AthenaConnection.<br/><br/>
+<h3>Handlers</h3>
+Handlers are used to pre-process a host-agnostic Command and provide hints to the Connect about how to execute it.<br/>
+<br/>
+The operations that Handlers perform on a command:
+<ul>
+<li>Set up any tuning operations for this command - such as chunk sizes</li>
+<li>Validate the parameters being passed in (only existence checking)</li>
+<li>Determines whether the results of this command are to be cached in memory</li>
+<li>Obtains the correct dialect for the Connect to use, when processing the data pre- and post-call on the host system</li>
+<li>May provide shell like replacement of parameters in a string i.e. <code>select * from customers where lname="${lname}" and customer_id=${cust_id}</code></li>
+</ul>
+If the HandlerEngine returns a String (for JDBC) this is considered to be straight SQL and issued. If it is a command object, athena considers this to be partly-pre-processed, and passes this to the Connect (as is the case with Stored Procedures). In the case of a dialect, i.e non-JDBC data source, athena adds a special parameter to the command object referencing the dialect to use, before sending it on to the Connect for further processing.<br/><br/>
+<a name="types">
+<h3>Types</h3>
+Although handlers delegate the interpretation of certain CHI types to Host types to Dialects later in the execution process, types are attached to parameters in the handlers, so we'll talk about them here.<br/><br/>
+Types are held in a TypeEngine, and Athena defines 4 different Types, Objects, Arrays, Translators and Expressions.
+ObjectTypes are the counterpart to adding a CompoundType into a Command, ArrayTypes are linked to Arrays in a Command. Translators take in an existing type and use a class to change the current parameter overwriting it's pervious data in the command. 
+
+So for instance, a java.util.Date parameter called 'theDate' in a Command, is marked in a handler as a MainFrameDate see below:
+
+
+In the types data file - held in &lt;athenaroot>/config/handlers/&lt;athenaservicename>.types.xml will be the following
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>&lt;types>
+	&lt;type name="mainframe_date">
+        	&lt;transform class="athena.command.types.transforms.MainFrameDate_type"/>
+	        &lt;allowabletransforms>
+            		&lt;java type="java.util.Date"/>
+        	&lt;/allowabletransforms>
+    	&lt;/type>
+
+    	&lt;type name="cust_num">
+        	&lt;expression ex="\d{4}[A-Z]"/>
+    	&lt;/type>
+&lt;/types>
+</pre>
+</font>
+</td>
+</tr>
+</table>
+</center><br/>
+We then create a handler that references these types<br/><br/>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?>
+&lt;!DOCTYPE chi >
+&lt;chi>
+    &lt;name>custorderdetails&lt;/name>
+    &lt;context key="SYS1">
+        &lt;params>
+            &lt;param name="customer" validation="NOTNULL|REQUIRED" type="cust_num" />
+            &lt;param name="birthdate" validation="NOTNULL|REQUIRED" type="mainframe_date"/>
+            &lt;param name="orderdate" validation="NOTNULL|REQUIRED" type="mainframe_date"/>            
+        &lt;/params>
+        &lt;command type="dialect" alias="CUST1PRG">
+			&lt;command-text>
+	            DefaultCTG:CUST
+			&lt;/command-text>
+        &lt;/command>
+    &lt;/context>
+&lt;/chi>
+</pre>
+ </font>
+</td>
+</tr>
+</table>
+</center>
+So a command with the callname of '<em>custorderdetails</em>' is sent to Athena, Athena will validate that all the above parameters are in the command, and are not null, it will also transform the java dates in 'birthdate' and 'orderdate' to string representations of dates suitable for the Host system, and it will also check that the 'customer' field matches the regular expression in the cust_num type.<br/> If the cutomer field is invalid, either of the dates are the wrong class to transform from, or any if these fields are missing, validation fails.<br/>
+No interaction with the host is required.<br/>
+This does not preclude extra parameters being set and used in the dialects, just that these parameters have validation on them, but it is usually best to add the parameters in there.<br/>
+<H2>Command types </H2>
+Dependent upon the connector there are a few different kinds of command invocation that you can choose from.<br/>
+Currently these are:<br/>
+<ul>
+<li><em>replaced</em> - String replacement</li>
+<li><em>dialect</em> - Use a specified athena dialect</li>
+<li><em>proc</em> - execute a stored procedure</li>
+<li><em>prepare</em> - use a PreparedStatement</li>
+</ul>
+Scheduled for inclusion in Athena 1.1 are:
+<ul>
+<li><em>groovy</em> - execute a groovy script as your handler</li>
+<li><em>jython</em> - execute a jython script as your handler</li>
+</ul>
+
+<h3>Replace commands</h3>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+&lt;command type="replace">
+	&lt;command-text>
+		INSERT into AthenaTest(CODE,DESCRIPTION, QUANTITY) 
+			VALUES('${code}', '${description:quoted_string}',${quantity})
+	&lt;/command-text>
+&lt;/command>
+</pre>
+ </font>
+</td>
+</tr>
+</table>
+</center>
+
+<h3>Dialect commands</h3>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+&lt;command type="dialect" alias="CICS01PRG">
+	&lt;command-text>
+		DefaultCTG:CICS01
+	&lt;/command-text>
+&lt;/command>
+</pre>
+ </font>
+</td>
+</tr>
+</table>
+You'll notice two things about the dialect command, the addition of the alias attibute, and the command text. The alias attribute, defines the command alias on the host, i.e. the program/transaction/procedure that you want athena to tell the host to execute. The command text indicates an XSL processing dialect is to be used and is in two parts split by the colon(:). The first section tells Athena to use the DefaultCTG_Dialect for invoking against CICS, the second part tells the dialect what XSL transform set to use for processing the command pre and post host execution.
+</center>
+
+<h3>Stored Procedure commands</h3>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+&lt;command type="proc" alias="catalog.procedurename">
+	&lt;command-text>
+		begin catalog.procedurename(?,?,?,?,?);end;
+	&lt;/command-text>
+&lt;/command>
+</pre>
+ </font>
+</td>
+</tr>
+</table>
+</center>
+Again the alias attribute informs the connector of the exact procedure to use, however this procedure's metadata must have been previously loaded in the &lt;AthenaName>_proc.xml file in the &lt;athenaroot>/handlers directory. the command text is then used to create the CallableStatement in Connection#prepareCall(). The parameter names for the procedure are mapped directly against the Athena command parameters , so if the stored procedure has a parameter of IN_CUST_ID then your athena command must be sent to Athena with a parameter of IN_CUST_ID.
+<h3>Prepared Statement commands</h3>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+&lt;command type="prepare">
+	&lt;command-text>
+	    INSERT into imagetable(name, img)  VALUES(?,?)
+	&lt;/command-text>
+	&lt;prepared-param type="string" index="1" comm-param="code"/>
+	&lt;prepared-param type="blob" index="2" comm-param="image"/>	    
+&lt;/command>
+</pre>
+ </font>
+</td>
+</tr>
+</table>
+</center>
+Prepared statements use the <code>prepared-param</code> tags to define the type, index and command parameter mappings between the command and the prepared statement shown between the <code>command-text</code> tags. The example shows how to update a Binary field in a database. Currently, the only support for binary objects or large character objects is through the JDBC BinaryStream/CharacterStream methods, although more support will be added into the 1.1 release.<br/><br/><hr>
+
+
+<a href="index.html">Back to Overview</a>
+</body>
+
+</html>

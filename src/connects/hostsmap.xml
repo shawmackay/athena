@@ -1,0 +1,12 @@
+<filemapper>
+	<map file="/etc/hosts">
+		<ignore-line start="#"/>
+		<ignore-line after="#"/>
+		<ignore-blanks/>
+		<record fields-separated-by="/w*">
+			<field name="ipaddr" type="string"/>
+			<field name="hostname" type="string"/>
+			<field name="shortname" type="string"/>
+		</record>
+	</map>
+</filemapper>

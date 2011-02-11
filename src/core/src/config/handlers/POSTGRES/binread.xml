@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>imageread</name>
+    <context key="SYS1">
+    <params/>
+    <command type="replace">
+	    <command-text>
+	    	SELECT * from imagetable
+	    </command-text>
+    </command>
+    </context>
+</chi>
+

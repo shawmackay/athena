@@ -1,0 +1,48 @@
+<scripttemplate>
+	<platform name="Windows">
+		<script name="runathena2.bat" dir="bin">
+@echo off
+set ATHENACLASSPATH=$[JINILIBS];$[SERVICEUILOC]
+echo -------------------------
+echo      Starting Athena
+echo -------------------------
+echo Ensure that your classes for your host connections are specified in the DRIVERLIBS environment variable
+java -classpath .;lib\athena-core.jar;lib/athena-core-depend.jar;lib/util2_0.jar;%ATHENACLASSPATH% org.jini.projects.athena.ServiceApplication %1
+		</script>
+		<script name="runathena_oracle2.bat" dir="bin">
+@echo off
+set DRIVERLIBS=$[ADDITIONALLIBS];lib\athena_oracle.jar
+bin\runathena.bat %1		
+		</script>
+		<script name="run_configuration.bat" dir="bin">
+java -classpath .;lib/athena-core.jar;lib/athena-core-depend.jar;lib/util2_0.jar;lib/instconfig.jar org.jini.projects.athena.launcher.FirstTimeLauncher athena.lax.old
+		</script>
+		<script name="runathena_jdbc2.bat" dir="bin">
+@echo off
+set DRIVERLIBS=$[ADDITIONALLIBS];lib\athena_jdbc.jar
+bin\runathena.bat %1		
+		</script>		
+	</platform>
+	<platform name="Linux">
+		<script name="runathena2.sh" dir="bin">	
+export ATHENACLASSPATH=$[JINILIBS];$[SERVICEUILOC]
+echo -------------------------
+echo      Starting Athena
+echo -------------------------
+echo Ensure that your classes for your host connections are specified in the DRIVERLIBS environment variable
+java -classpath .:lib/athena-core.jar:lib/athena-core-depend.jar:lib/util2_0.jar:$ATHENACLASSPATH org.jini.projects.athena.ServiceApplication $1 	
+		</script>
+		<script name="run_configuration.sh" dir="bin">
+java -classpath .:lib/athena-core.jar:lib/athena-core-depend.jar:lib/util2_0.jar:lib/instconfig.jar org.jini.projects.athena.launcher.FirstTimeLauncher athena.lax.old
+		</script>
+		
+		<script name="runathena_oracle2.sh" dir="bin">	
+export DRIVERLIBS=$[ADDITIONALLIBS]:lib/athena_oracle.jar
+bin/runathena.bat $1				
+		</script>		
+		<script name="runathena_jdbc2.sh" dir="bin">	
+export DRIVERLIBS=$[ADDITIONALLIBS]:lib/athena_jdbc.jar
+bin/runathena.bat $1				
+		</script>				
+	</platform>
+</scripttemplate>

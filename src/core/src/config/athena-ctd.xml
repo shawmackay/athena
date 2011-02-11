@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templatedb>
+	<component name="org.jini.projects.athena">
+		<entry name="athenaName" comment="Used in registration and lookup" type="String" default='' optional="false"/>
+		<entry name="codebase" comment="Athena codebase URL" type="String" default='"http://127.0.0.1/athena-dl.jar"' optional="false"/>
+		<entry name="consoleLoggingLevel" comment="Logging level used when writing output logs to the console window" type="String" default='"INFO"' optional="true"/>
+		<entry name="fileLoggingLevel" comment="Logging level used when writing output logs to files" type="String" default='"FINE"' optional="true"/>
+		<entry name="groups" comment="List of Jini groups used in Lookup" type="String[]" default='new String[]{""};' optional="false"/>
+		<entry name="loginContext" comment="JAAS Login context" type="LoginContext" default='null' optional="true"/>
+		<entry name="policy" comment="Security Policy file" type="String" default='"conf/policy.all"' optional="false"/>
+		<entry name="thorBranch" comment="Name of branch holding Athena config information" type="String" default='null' optional="false"/>
+		<entry name="thorName" comment="Name of thor instance holding Athena configuration" type="String" default='' optional="false"/>
+		<entry name="ui" comment="Specifies use a small monitor GUI - either 'clean' or 'lights'" type="String" default='"clean"' optional="true"/>
+	</component>
+	
+</templatedb>	

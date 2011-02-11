@@ -1,0 +1,55 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.cwa.co.uk">
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="1"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="2"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="3"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="4"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="5"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="6"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="7"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="8"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="9"/>
+	</command>
+	<command callname="athenatest" type="update">
+		<param name="code" value="GHIJK"/>
+		<param name="description" value="Generic Gadget"/>
+		<param name="quantity" value="10"/>
+	</command>
+
+	
+</harness:commands>

@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Service Management :: Athena</title>
+</head>
+<body>
+<h2>Service Management Classes</h2>
+
+Athena's service management is mainly handled through the SystemManager and JoinManagement classes, as well as through it's admin proxies.<br/>
+<br/>
+SystemManager obtains references to Eros for Athena's distributed error logging, maintains references to the System state and the configuration listener that Thor uses to propagate administration changes. It also contains the means by which Athena can automatically go off-line and bring itself back on-line, in the event of a host system crash<br/>
+<br/>
+JoinManagement performs all of the service Join operations, and connects to Thor and obtains the current configuration, applies it to the system, and then performs the join.<br/>
+<br/>
+<em>It is highly likely that these two classes will be refactored into one, at some point, because their responsibilities are very similar</em>
+
+<h3>ServiceUI</h3>
+
+Athena's serviceui is currently under development, but still is useful in it's current form.<br/>
+<center>
+<table border="0"width="90%">
+<tr>
+<td width="20%">
+<center><a href="images/athenainfo.png" target="_blank"><img src="images/athenainfo_small.png" border="0"><br/>Information Pane</a></center>
+</td>
+<td width="20%">
+<center><a href="images/athenamonitor.png"  target="_blank"><img src="images/athenamonitor_small.png" border="0"><br/>Monitor</a></center>
+</td>
+<td width="20%">
+<center><a href="images/athenahandler.png" target="_blank"><img src="images/athenahandler_info.png" border="0"><br/>Handlers</a></center>
+</td>
+<td width="20%">
+<center><a href="images/athenatypes.png" target="_blank"><img src="images/athenatypes_small.png" border="0"><br/>Types</a></center>
+</td>
+<td width="20%">
+<center><a href="images/athenagrid.png" target="_blank"><img src="images/athenagrid_small.png" border="0"><br/>DataGrid</a></center>
+</td>
+
+</tr>
+</table>
+</center>
+<font size=-1>Click on any of the thumbnails to get a bigger picture</font>
+<br/><br/><hr><a href="index.html">Back to Overview</a>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Recovery :: Athena</title>
+</head>
+<body>
+    <h2>Recovery</h2>
+In the main, because Athena 'proxies' an existing transactional system, upon restart, it checks with the Transaction Manager, 
+through the normal transaction join protocol, and also checks with the transaction manager regarding the state of the transaction<br/><br/>
+
+If, the transaction manager notes an ABORTED transaction, Athena simply dumps it's logs and continues restart. 
+If it is signalled to be committed, Athena reissues the updates to the host system, and considers the matter closed, as
+these updates would have gone through normally.<br/>If Athena signalled PREPARE to the Transaction Manager, of course there
+is the issue that if Athena is offline for long enough then these re-issued updates may not succeed, Athena the stores this log to disk
+and raises an appropriate error message. Athena can be configured to either exit at this point, i.e. will not allow further connections until this
+issue is resolved in some way, or you may wish it to continue normally, and resolve the issue without affecting anything else.<br/>
+
+<br/>
+<h3>What does Athena store in it's logs?</h3>
+Athena stores each command as each executeUpdate occurs. For this reason, it is important to have
+no time sensitive transformations that may adversely affect your systems, should they be re-issued later on.<br/>
+<b>Why re-translate?</b><br/>
+In the event of a failure-recovery scenario, Athena assumes that the transaction was aborted anyway, therefore, by using
+deterministic translations, if the transaction recovers and resubmits the commands against the host, the 
+data should be the same, BUT if you have translations based on when the update occurs, these will now be dependent on when
+the <i>recovery</i> occurs, not when the command was <i>received</i>from the client.<br/>
+If you need time information such as a date, supply the date as a field, and translate the field in an Athena type. In fact, Athena forces this because it has no internal concept
+of 'NOW' or 'TODAY
+<br/><br/><hr><a href="index.html">Back to Overview</a>
+</body>
+</html>

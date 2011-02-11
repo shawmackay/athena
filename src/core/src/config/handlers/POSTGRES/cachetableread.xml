@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>cacheread</name>
+    <context key="SYS1">
+    <params>
+		<param name="name" validation="NOTNULL|REQUIRED"/>
+    </params>
+    <command type="replace" useCache="true">
+	    <command-text>
+	    	SELECT * from cachetest where name='${name}'
+	    </command-text>
+    </command>
+    </context>
+</chi>
+

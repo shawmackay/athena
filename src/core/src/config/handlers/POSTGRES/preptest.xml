@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+<!DOCTYPE chi >
+
+<chi>
+	<name>preptest</name>
+    <context key="SYS1">
+    <params>
+	    <param name="code" validation="NOTNULL|REQUIRED" type="codetype"/>
+		<param name="description" validation="NOTNULL|REQUIRED"/>
+		<param name="quantity" validation="NOTNULL|REQUIRED"/>
+    </params>
+    <command type="prepare">
+	    <command-text>
+	    	INSERT into AthenaTest(CODE,DESCRIPTION, QUANTITY)  VALUES(?,?,?)
+	    </command-text>
+    	<prepared-param type="string" index="1" comm-param="code"/>
+    	<prepared-param type="string" index="2" comm-param="description"/>	    	
+    	<prepared-param type="int" index="3" comm-param="quantity"/>
+    </command>
+    </context>
+</chi>
+

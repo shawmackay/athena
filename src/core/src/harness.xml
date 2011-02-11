@@ -1,0 +1,6 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.cwa.co.uk">
+	<command callname="tester" type="query">
+		<param name="lctext" value="hello"/>
+	</command>	
+</harness:commands>

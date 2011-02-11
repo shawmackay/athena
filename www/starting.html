@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "file:///usr/share/screem/dtd/loose.dtd">
+<html>
+	<head>
+		<title>Athena : Getting Started</title>
+	</head>
+	<body>
+	<h1>Tutorials</h1>
+		<h2>Getting Started</h2>
+There are roughly 4 steps to getting Athena running<br/>
+<ol>
+<li>Loading the properties into Thor and setting Athena's configuration file</li>
+<li>Having the correct Athena Connect available</li>
+<li>Ensuring you have access to the correct drivers or libraries</li>
+<li>Modifying Athena's runtime classpath</li>
+</ol>
+<br/>
+<p>The examples set down below are assuming the usage of a JDBC or similar database as your datasource, if your needs are different then add an email to the Athena discusssion forums. I will explain how to get Athena to connect and proxy a PostgreSQL database
+</p><p>If you don't have a database on your machine see <a href="hsql_started.html">here</a> for information on how to use Athena with an embedded database.</p>
+ 
+<h3>Thor properties</h3>
+For JDBC, the Properties are as follows:
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+org.jini.projects.athena.service.name=Postgres
+org.jini.projects.athena.service.numconnect=10
+org.jini.projects.athena.service.groups=mygroup
+org.jini.projects.athena.connect.type=SQL
+org.jini.projects.athena.connect.driver=org.postgresql.Driver
+org.jini.projects.athena.connect.url=jdbc:postgresql://host:port/database
+org.jini.projects.athena.connect.username=&lt;pguser>
+org.jini.projects.athena.connect.password=&lt;pgpass>
+org.jini.projects.athena.connection.class=org.jini.projects.athena.connects.sql.SQLConnection
+org.jini.projects.athena.connection.adhoctimeout=50000
+</pre>
+</font>
+</td></tr></table></center>
+It should be fairly self-explanatory as to what these properties mean, and you should be able to tailor these to your specific database.<br/>
+You will need a dedicated connector, when you need to handle more complex things like Stored Procedures and complex SQL types.<br/>
+Place these properties into a properties file and import them into Thor as a Properties Handler (see <a href="http://thor.jini.org/serviceui.html">Thor ServiceUI</a>). You may place these properties on any branch you wish<br/><br/>
+Once this is done, you'll need to setup your Athena configuration file - this specifies the name of your Athena instance (as will be shown in most ServiceUI browsers), jini groups that the service will join and information to find Thor and the branch in Thor where your system properties are held.<br/>
+<br/>
+So assuming that we are joining the 'mygroup' group and we have loaded our properties into a Thor instance locatable through the name 'configThor' on the branch 'configuration/props/athena/pg'; the Jini configuration file will look like the following<br/><br/>
+
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>org.jini.projects.athena {
+	athenaName="Postgres";
+	groups=new String[]{"mygroup"};
+	ui="clean";
+	thorName="configThor";
+	thorBranch="configuration/props/athena/pg";	
+}
+</pre></font></td></tr></table></center>
+
+Alternative to loading the data through a properties file, you can use the following XML as a template, given the information above<br/>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<font color="black">
+<pre>
+&lt;root&gt;
+ &lt;branch name=&quot;configuration&quot;&gt;
+  &lt;branch name=&quot;props&quot;&gt;
+    &lt;branch name=&quot;athena&quot;&gt;
+      &lt;props name=&quot;pg&quot;&gt;
+        &lt;item name=&quot;org.jini.projects.athena.service.name&quot; type=&quot;java.lang.String&quot;&gt;Postgres&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connect.username&quot; type=&quot;java.lang.String&quot;&gt;myuser&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connect.type&quot; type=&quot;java.lang.String&quot;&gt;SQL&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connection.class&quot; type=&quot;java.lang.String&quot;&gt;org.jini.projects.athena.connects.sql.SQLConnection&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connect.password&quot; type=&quot;java.lang.String&quot;&gt;mypass&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.service.numconnect&quot; type=&quot;java.lang.String&quot;&gt;4&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connect.url&quot; type=&quot;java.lang.String&quot;&gt;jdbc:postgresql://[host]:[port]/[database]&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.ui.clean&quot; type=&quot;java.lang.String&quot;&gt;true&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connect.driver&quot; type=&quot;java.lang.String&quot;&gt;org.postgresql.Driver&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.connection.adhoctimeout&quot; type=&quot;java.lang.String&quot;&gt;50000&lt;/item&gt;
+        &lt;item name=&quot;org.jini.projects.athena.service.groups&quot; type=&quot;java.lang.String&quot;&gt;mygroup&lt;/item&gt;
+      &lt;/props&gt;
+    &lt;/branch&gt;
+  &lt;/branch&gt;
+ &lt;/branch&gt;
+&lt;/root&gt;
+</pre>
+</font></td></tr></table></center>
+<h3>Having the correct Athena connect available</h3>
+For PostgreSQL (without any special behaviour necessitating a spcific PostgeSQL connect) you can use the athena jdbc Connect<br/>
+Copy the athena_jdbc.jar to [athena_root]/lib and runathena_jdbc.sh (or runathena_jdbc.bat) to [athena_root]/bin<br/>
+Then modify the runathena_jdbc.sh (or .bat file) and make sure that the DRIVERLIBS variable points to your jdbc driver and [athena_root]/lib/athena_jdbc.jar
+<br/><br/>
+<h3>Testing the Connect</h3>
+Regardless of whether you have built Athena from sources, or downloaded the binary package, you will find the following directory structure<br/>
+<center>
+<img src="images/athena_start1.png"><br/>
+<font size=-1>Figure 1) The Athena directory structure</font></center><br/>
+The bin directory contains all the startup scripts, and these have to be run from the athena root directory i.e. . bin/runathena_xxxxxx.sh or bin\runathena_xxxxxx.bat. Never call <code>runathena</code> directly, build (or download) a connector for your datasource, and create a wrapper script that calls bin/runathena.sh or bin\runathena.bat after setting the appropriate driver libraries, which get inserted into your classpath. Generally, all the athena libraries and athena connector libraries go in athena_root/lib<br/>
+You will, however, need to modify the ATHENACLASSPATH variable in the script to point to the util2_0.jar and serviceui-1.1.jar<br/>
+The config directory contains a number of subdirectories: dialects, handlers and sets<br/>
+<h4>Dialects directory</h4>
+Athena looks in the config/dialects directory for your SystemConnection dialects and adds the name of your athena instance to the base directory of <code>config/dialects</code>code>
+In each instance directory, there are two more subdirectories - in and out. These represent different directories for in (before going to the host system) and out (after the call has executed on the host system) transforms, and contains a file call XSLTransforms.xml. The dialect directory does not need to exist - sometimes the connect will set up default dialects, for things like StoredProcedures.
+<br/>
+<h4>Handler directory</h4>
+Athena looks in the config/handler directory for your command parsers, anytime you pass an athena Command object to Athena, a handler must exist here. There is some information on how handlers are constructed <a href="handlers.html">here</a>
+<h4>Sets directory</h4>
+Although not required, you can use the sets directory to hold your configurations and property information for Thor, that you use to connect Athena to your datasources.
+
+
+For our postgres example above, assuming you have put in the appropriate connection parameters (host, user, password), loaded them into Thor, and placed the Jini configuration file in the athenaroot directory (and the file reflects your setup), you can now start Athena<br/>
+<br/>
+Type <br/>
+<code>
+. bin/runathena_jdbc.sh pg.config<br/>
+</code><br/>
+If everything went okay the following output should be shown:<br/>
+<center>
+<table width=60% bgcolor="black" cellpadding="6">
+<tr><td>
+<font color="white">
+<pre>. bin/runathena_jdbc.sh pg.config
+-------------------------
+Starting Athena
+-------------------------
+Ensure that your classes for your host connections are specified in the DRIVERLIBS environment variable
+Creating Manager: config/exportmgr.config
+04-May-2004 15:17:34 utilities20.export.DefaultExportManager &lt;init>
+INFO: Defining Service export rule  for ExporterManager default
+04-May-2004 15:17:35 utilities20.export.DefaultExportManager &lt;init>
+INFO: Defining Connection export rule  for ExporterManager default
+04-May-2004 15:17:35 utilities20.export.DefaultExportManager &lt;init>
+INFO: Defining Participants export rule  for ExporterManager default
+04-May-2004 15:17:36 utilities20.export.DefaultExportManager &lt;init>
+INFO: Defining ResultSet export rule  for ExporterManager default
+Initialising SystemManager
+Eros could not be found....default logging will be provided
+Creating default pool.......
+ </pre></font></td></tr></table></center>
+
+Athena does not require Eros (distributed error logging service) to be running, (although it can be configured to exit if it is not available), but it does require Thor to be available. If thor is not available, or you have not specified the correct settings in your configuration file, Athena will exit and ask you to check the log files.<br/>
+
+If Thor can be found, if you have specified a user interface to be shown, a window, similar to the one below, should be visible after few seconds<br/>
+<center>
+<img src="images/athenadashboard.jpg"><br/>
+<font size=-1>Figure 2) The Athena server-side GUI</font></center><br/>
+</center>
+<h3>Testing the connection</h3>
+You can use Athena's serviceUI to check that the connections have been successful<br/>
+<center>
+<img src="images/athena_start3.png"/><br/>
+<font size=-1>Figure 3) The Athena Data Grid</font></center><br/>
+</center>
+<b>Note:</b> Please note that currently the serviceUI datagrid only supports passthrough to a SQL Database, full Athena Command support is scheduled for the next release
+<br/><br/><hr><a href="index.html">Back to Overview</a>
+	</body>
+</html>

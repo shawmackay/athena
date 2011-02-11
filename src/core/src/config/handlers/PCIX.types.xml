@@ -1,0 +1,12 @@
+<types>
+    <type name="policy_no">
+        <expression ex="\d{6}[A-Z]"/>
+    </type>
+    <type name="capsil_date">
+        <transform class="athena.command.types.transforms.CapsilDate_type"/>
+        <allowabletransforms>
+            <java type="java.util.Date"/>
+        </allowabletransforms>
+    </type>
+</types>
+

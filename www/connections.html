@@ -1,0 +1,136 @@
+<html>
+<head>
+	<title>Connection Classes :: Athena</title>
+</head>
+<body>
+<div class="h3" id="longdescription">
+	<h2>Connection Classes</h2>
+Athena has two types of Connections, <a href="#AthenaConnection">AthenaConnections</a>, and <a href ="#SystemConnection">SystemConnections</a><br/>
+SystemConnections represent the interfaces that Athena uses to communicate with host systems<br/>
+AthenaConnections represent the client view of a connection to Athena<br/>
+<a name="SystemConnection"></a>
+<h3>SystemConnection</h3>
+The SystemConnection Interface is what separates the core of Athena (i.e. handlers, caches,etc.) from the classes that
+actually deal wih talking to the host system. Classes that implement SystemConnection are normally called <b>Connects</b>.<br/>
+
+<h4>Available Connects</h4>
+Athena comes pre supplied with 5 Connects/combinations, each with different requirements, as detailed below:<br/><br/>
+
+<table title='Connects' border="0" align="center" cellspacing="1" cellpadding="5"  bgcolor="#d1d1ff"  width="90%">
+
+<tr bgcolor="black">
+
+<th><font color='white'>Connect name</font></th>
+<th><font color='white'>Connects to</font></th>
+<th><font color='white'>Required Software</font></th>
+<th><font color='white'>Notes</font></th>
+</tr>
+<tr>
+
+<td><font color='black'>SQLConnection</font></td>
+<td><font color='black'>Any JDBC Datasource</font></td>
+<td><font color='black'>JDBC drivers for your database</font></td>
+<td><font color='black'>Very generic. No support for SQL structs, arrays, or LOB's</font></td>
+</tr>
+<tr>
+
+<td><font color='black'>OracleConnection</font></td>
+<td><font color='black'>Oracle 8.1.7 upwards</font></td>
+<td><font color='black'>Oracle thin driver</font></td>
+<td><font color='black'>Supports<ul><li>Oracle objects</li><li>ARRAYs</li><li>CLOBs</li><li>Stored Procedures</li></ul></font></td>
+</tr>
+<tr>
+
+<td><font color='black'>SQLConnection (to MSSQL)</font></td>
+<td><font color='black'>MSSQL Server</font></td>
+<td><font color='black'>TwFreeTds_1.3.jar</font></td>
+<td><font color='black'>Set System property 'org.jini.projects.athena.connect.type' to mssql<br>Same restrictions as SQLConnnection,<br/> but allows stored procedures</font></td>
+</tr>
+<tr>
+
+<td><font color='black'>CTGConnection</font></td>
+<td><font color='black'>CICS Transaction Server 2.2</font></td>
+<td><font color='black'>CICS Transaction Gateway V5, and CTG jars</font></td>
+<td><font color='black'>Binds data into a commarea<br/>Uses XML and XSLT to translate between Athena and CICS</font></td>
+</tr>
+<tr>
+
+<td><font color='black'>BEAJoltConnection</font></td>
+<td><font color='black'>Tuxedo (and attached systems)</font></td>
+<td><font color='black'>Jolt (or product containing Jolt) & Elink/Tuxedo</font></td>
+<td><font color='black'>Uses Jolt definitions, currently defaults to a single string definition field, INOUT<br/>Can use XML and XSLT to translate between Athena and Jolt output</font></td>
+</tr>
+
+</table>
+
+
+<h3>JDBC &amp; Stored Procedure Support</h3>
+Athena supports procedures through the ProcedureHandler classes<br/>
+ProcedureHandler uses the system property <code>org.jini.projects.athena.connect.type</code> to obtain the appropriate stored procedure handler, if one is available<br/><br/>
+So for instance to have Oracle Stored procedures the following system properties are downloaded from <a href="http://thor.jini.org">Thor</a><br/>
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<pre>
+org.jini.projects.athena.service.name=ORCLdb
+org.jini.projects.athena.service.numconnect=10
+org.jini.projects.athena.service.groups=production
+org.jini.projects.athena.connect.type=Oracle
+org.jini.projects.athena.connect.driver=oracle.jdbc.driver.OracleDriver
+org.jini.projects.athena.connect.url=jdbc:oracle:thin:@&lt;server>:&lt;port>:&lt;SID>
+org.jini.projects.athena.connect.username=scott
+org.jini.projects.athena.connect.password=tiger
+org.jini.projects.athena.connection.class=org.jini.projects.athena.connects.oracle.OracleConnection
+org.jini.projects.athena.connection.adhoctimeout=50000
+</pre>
+</td></tr></table></center>
+<br/>
+For MSSQL, the properties should be similar to
+<center>
+<table width=60% bgcolor="#d1d1ff" cellpadding="6">
+<tr><td>
+<pre>
+org.jini.projects.athena.service.name=MSSQLdb
+org.jini.projects.athena.service.numconnect=10
+org.jini.projects.athena.service.groups=production
+org.jini.projects.athena.connect.type=MSSQL
+org.jini.projects.athena.connect.driver=com.thinweb.tds.Driver
+org.jini.projects.athena.connect.url=jdbc:twtds:sqlserver://&lt;server>[:&lt;port>]/&lt;database>
+org.jini.projects.athena.connect.username=sa
+org.jini.projects.athena.connect.password=adminpass
+org.jini.projects.athena.connection.class=org.jini.projects.athena.connects.sql.SQLConnection
+org.jini.projects.athena.connection.adhoctimeout=50000
+</pre>
+</td></tr></table></center>
+The required procedure handler is loaded dependent upon the org.jini.projects.athena.connect.type parameter, not on the connection class, this is so you can use the default SQLConnection class, but with specific support for Stored Procedures for you r database, if you don't require any fancy datatype handling, or driver specific functionality.<br/><br/>
+<em>Note:</em> Athena currently does not support handling cursors as return values from a stored procedure, this may be implemented in a later release, dependent upon demand and time.
+<hr>
+<a name="AthenaConnection"></a>
+<h3>AthenaConnection</h3>
+The AthenaConnection interface represents the opposite end of the system - accepting requests from clients, rather than despatching requests to a host system.<br/>
+An AthenaConnection is obtained from the AthenaRegistration (Athena's service object) and is leased, meaning that if your client dies, Athena can reclaim the connection and rollback any transactions open, as a result of the broken communication between you and the Athena instance.<br/>
+Most of your dealings with Athena will be through this interface, and as such a good overview discussion will be invaluable.<br/><br/>
+I'll assume an instance of Athena is connected to a JDBC database, and is in a variable named 'conn'<br/>
+<h3>Issuing Queries</h3>
+For JDBC systems, queries can be issued in one of two ways - either through handlers, or straight SQL.<br/>
+Firstly we'll look at sending SQL through Athena.<br/>
+The following code shows how to issue a query against Athena:
+<pre>
+	...
+	AthenaResultSet rs = conn.executeQuery("select id, first_name, last_name from customers");
+	...
+</pre>
+<br/>
+For more information: <a href="resultsets.html">ResultSets</a>
+<br/> There are 5 types of query command, but it is advised not to use the executeBatchQuery variants, as these are being phased out by 'multi-operation handlers'<br/>
+<h4>Difference between executeQuery and executeObjectQuery</h4>
+When using these two methods, there is a single, but major difference between them, that occurs inside the Athena service - executeQuery expects that the result of any operation yields an instance of AthenaResultSet, thus you can always use executeQuery when you know a set of results, will be returned, if using StoredProcedures or non-JDBC Connects, however, the data may or may not be returned to you as a ResultSet. If you use executeQuery and the return data of the operation is not an AthenaResultSet, you will receive a WrongResultTypeException.<br/>
+If in doubt, use executeObjectQuery and cast - this is likely to be made easier in later releases.<br/>
+<h3>Updates</h3>
+Contrary to queries above, Athena has only one update method  - executeUpdate. If a transaction is passed, in the method, Athena will join to the transaction, if the connection is not already associated with it, or, if the connection is associated with a different connection, throw an Exception. After joining (if required), Athena will then issue the command against the datasource returning any return data, in a similar fashion to executeObjectQuery.<br/>
+Athena stores all commands against it during a transactional session to disk, facilitating restart and recovery.
+<h4>Why do updates only reference transactions, not queries?</h4>
+Because Athena proxies an existing transactional system, queries will automatically come under the current transaction isolation level of the host system, therefore because queries only read, there is no reason to associate a query call with a transaction.<br/><br/><hr><a href="index.html">Back to Overview</a>
+</div>
+</body>
+</html>

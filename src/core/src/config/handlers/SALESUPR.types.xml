@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Created by calum on 29 January 2002, 10:13 -->
+
+
+<types>
+    <type name="ts_arr">
+        <array>
+            <header value="ts_arr("/>
+            <repeater value="%type_struct"/>
+            <separator value =","/>
+            <tail value=")"/>
+        </array>
+    </type>
+    <type name="arr">
+        <array>
+            <header value="ts_arr("/>
+            <repeater value="type_struct(${object.value}, '${object.date}',${object.dummy.name})"/>
+            <separator value=","/>
+            <tail value=")"/>
+        </array>
+    </type>
+    <type name="object">
+        <object>
+            <field name="value" />
+            <field name="date" />
+            <field name="dummy" type="%dummy"/>
+        </object>
+    </type>
+    <type name="type_struct">
+        <object>
+            <field name="val"/>
+            <field name="date"/>
+        </object>
+    </type>
+
+    <type name="dummy">
+        <object>
+            <field name="name"/>
+        </object>
+    </type>
+    <type name="policy_no">
+        <expression ex="\d{6}[A-Z]"/>
+    </type>
+    <type name="capsil_date">
+        <transform class="athena.command.types.transforms.CapsilDate_type"/>
+        <allowabletransforms>
+            <java type="java.util.Date"/>
+            <java type="java.sql.Date"/>
+        </allowabletransforms>
+    </type>
+</types>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+    <fileobject name="WrongReturnTypeException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="WrongReturnTypeException"/>
+    </fileobject>
+    <fileobject name="CannotExecuteException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="CannotExecuteException"/>
+    </fileobject>
+    <fileobject name="PooledConnectionException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="PooledConnectionException"/>
+    </fileobject>
+    <fileobject name="EmptyResultSetException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="EmptyResultSetException"/>
+    </fileobject>
+    <fileobject name="CannotUpdateException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="CannotUpdateException"/>
+    </fileobject>
+    <fileobject name="AthenaException.java">
+        <attr name="class_dependency_java.lang.Exception" stringvalue="AthenaException"/>
+    </fileobject>
+</attributes>

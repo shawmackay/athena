@@ -1,0 +1,8 @@
+<harness:commands
+    xmlns:harness="http://harness.athena.projects.jini.org">
+	<command callname="athenatest2" type="update">
+		<param name="code" value="ABCDE"/>
+		<param name="description" value="Generic Widget"/>
+		<param name="quantity" value="1"/>
+	</command>
+</harness:commands>
